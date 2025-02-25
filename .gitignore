@@ -2,3 +2,4 @@
 .cache
 # Linux identifier
 *Zone.Identifier
+__pycache__*
