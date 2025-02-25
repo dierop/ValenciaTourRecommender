@@ -57,7 +57,7 @@ class DataLoader():
         """
         Load the puntuaciones dataset from the given path.
         """
-        with open(path, "r") as f:
+        with open(path, "r", encoding='latin1') as f:
             lines = f.readlines()
 
             # Procesar el archivo en bloques de 3 líneas
