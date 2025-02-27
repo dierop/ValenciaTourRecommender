@@ -14,6 +14,7 @@ class DataLoader():
         Load the puntuaciones dataset from the given path.
         """
         return self._load_file(path, ['user','place','score'])
+    print('hola')
 
     
     def load_datos_personales(self, path: str = "data/usuarios_datos_personales.txt") -> pd.DataFrame:
