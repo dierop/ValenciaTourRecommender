@@ -1,34 +1,40 @@
-from preprocess import get_all_preferences
-from data_loader import DataLoader
-class BaseRecommender():
+from abc import ABC, abstractmethod
+from src.data_loader import Data
+import numpy as np
+import pandas as pd
+class BaseRecommender(ABC):
 
-    def __init__(self):
-        loader= DataLoader()
-        df_preferences = loader.load_preferencias()
-        df_users = loader.load_usuarios_preferencias()
-        self.all_preferences, self.user_mapping = get_all_preferences(df_preferences, df_users)
-        self.items = loader.load_items()
-        self.clasificacion_items = loader.load_clasificacion_items()
-        self.puntucaiones = loader.load_puntuaciones()
-
+    def __init__(self, data: Data):
+        self.data = data
+ 
+    @abstractmethod
     def get_user_preferences(self, user_id):
-        user_idx = self.user_mapping[user_id]
-        return self.all_preferences[user_idx]
+        pass
     
-    def get_relevant_items(self, user_id):
-        preferences = self.get_user_preferences(user_id)
-        items_visitados = self.puntucaiones[self.puntucaiones['user'] == user_id]['place'].values
-        items = []
-        for i, score in enumerate(preferences):
-            if score > 0:
-                item_id = self.items.iloc[i]['item']
-                items.append((item_id, score))
+    def get_items_visited(self, user_id):
+        return self.data.puntuaciones[self.data.puntuaciones['user'] == user_id]['place'].values
+    
+    @abstractmethod
+    def get_relevant_items(self, preferences, items_visitados)->pd.DataFrame:
+        pass
+    
+    @abstractmethod
+    def compute_scores(self, relevant_items)->pd.DataFrame:
+        pass
 
     def recommend(self, user_id, n=10):
-        user_idx = self.user_mapping[user_id]
-        scores = self.model.predict(user_idx, np.arange(len(self.item_mapping)))
-        scores = np.array(scores)
-        scores = scores.squeeze()
-        best = np.argsort(scores)[::-1]
-        return [(self.item_mapping[i], scores[i]) for i in best[:n]]
+        """
+        
+        Returns the top n items to recommend to the user_id (id, name, score)
+        """
+        user_idx = self.data.user_mapping[user_id]
+        preferences = self.get_user_preferences(user_idx)
+        items_visitados = self.get_items_visited(user_idx)
+        relevant_items = self.get_relevant_items(preferences, items_visitados)
+        relevant_items = self.compute_scores(relevant_items)
+        items= relevant_items['item'].values[:n]
+        scores = relevant_items['score'].values[:n]
+        names = self.data.items[self.data.items['item'].isin(items)]['name'].values
+        return list(zip(items, names, scores))
+
     
