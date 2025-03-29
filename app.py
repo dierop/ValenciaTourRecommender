@@ -30,7 +30,7 @@ app.layout = html.Div([
     # Navigation
     html.Div([
         dcc.Link('Home', href='/home', className='btn btn-primary m-2'),
-        #dcc.Link('Page 2', href='/page2', className='btn btn-secondary m-2'),
+        dcc.Link('Preferences', href='/preferences', className='btn btn-secondary m-2'),
     ], className='text-center'),
     
     dash.page_container
