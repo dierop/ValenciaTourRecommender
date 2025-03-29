@@ -27,14 +27,14 @@ class BaseRecommender(ABC):
         
         Returns the top n items to recommend to the user_id (id, name, score)
         """
-        user_idx = self.data.user_mapping[user_id]
-        preferences = self.get_user_preferences(user_idx)
-        items_visitados = self.get_items_visited(user_idx)
+        preferences = self.get_user_preferences(user_id)
+        items_visitados = self.get_items_visited(user_id)
         relevant_items = self.get_relevant_items(preferences, items_visitados)
         relevant_items = self.compute_scores(relevant_items)
         items= relevant_items['item'].values[:n]
         scores = relevant_items['score'].values[:n]
         names = self.data.items[self.data.items['item'].isin(items)]['name'].values
-        return list(zip(items, names, scores))
+        other = relevant_items['other'].values[:n]
+        return list(zip(items, names, scores, other))
 
     
