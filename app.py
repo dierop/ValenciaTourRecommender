@@ -1,10 +1,12 @@
 import dash
 from dash import Dash, dcc, html, Output, Input, State, callback
 import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
 import pandas as pd
 import threading
 import webbrowser
-
+import json
+import datetime
 
 # Initialize Dash app with suppress_callback_exceptions
 app = Dash(__name__, 
@@ -36,7 +38,7 @@ app.layout = html.Div([
     dash.page_container
 ])
 
-# Callback de home, cuando Sign up para agregar nuevo usuario
+############### home.py: cuando Sign up para agregar nuevo usuario ############### 
 @callback(
     [Output("confirmation_message", "children"),
      Output("url", "pathname")], 
@@ -81,14 +83,58 @@ def submit_user(n_clicks, edad, sexo, ocupacion, hijos, edad_hijo_menor, edad_hi
     # Add new user to the DataFrame
     user_info = pd.concat([user_info, pd.DataFrame([new_user])], ignore_index=True)
     
+    
     # Return success message
     return (
         dbc.Alert(f"✅ Usuario {nombre} registrado exitosamente. ¡Gracias!",  color="success"),
         "/preferences"  # Redirect to preferences page
             )
 
+############### preferences.py: Callback to save preferences ############### 
+@callback(
+    [Output("pref-confirmation", "children"),
+     Output("preferences-data", "data")],
+    Input("save-prefs", "n_clicks"),
+    [State({"type": "pref-slider", "index": ALL}, "value"),
+     State("user_id", "data")],
+    prevent_initial_call=True
+)
+def save_preferences(n_clicks, slider_values, user_id):
+    if not n_clicks:
+        raise PreventUpdate
+    
+    # Create ordered list of all 15 preferences
+    ordered_preferences = [val for val in slider_values]
+    
+    user_preferences = {
+        "user_id": user_id,
+        "preferences": ordered_preferences,
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+    
+    try:
+        # Save to JSON file
+        with open("user_preferences.json", "a") as f:
+            json.dump(user_preferences, f, ensure_ascii=False)
+            f.write("\n")
+        
+        # Print to console for debugging
+        print(f"Saved preferences: {user_preferences}")
+        
+        return (
+            dbc.Alert("✅ Preferencias guardadas exitosamente!", color="success", className="mt-3"),
+            user_preferences
+        )
+    except Exception as e:
+        print(f"Error saving preferences: {str(e)}")
+        return (
+            dbc.Alert(f"❌ Error al guardar: {str(e)}", color="danger", className="mt-3"),
+            None
+        )
+
 # Importacion de las otras paginas al final de la app
 from pages import home
+from pages import preferences
 
 # Function to open browser automatically
 def open_browser():

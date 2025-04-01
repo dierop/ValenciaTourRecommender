@@ -2,21 +2,61 @@ from dash import register_page, html, dcc, Input, Output, State, callback, ALL
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import json
+import datetime
 
 register_page(__name__, path="/preferences")
+
+def create_preference_card(pref):
+    """Helper function to create a consistent preference card"""
+    return dbc.Card(
+        [
+            dbc.CardImg(
+                src=pref["image"],
+                top=True,
+                style={
+                    "height": "120px",
+                    "object-fit": "cover",
+                    "width": "100%"
+                }
+            ),
+            dbc.CardBody(
+                [
+                    html.H6(
+                        pref["name"],
+                        className="card-title text-center",
+                        style={"fontSize": "0.9rem"}
+                    ),
+                    dcc.Slider(
+                        id={"type": "pref-slider", "index": pref["id"]},
+                        min=0,
+                        max=100,
+                        step=5,
+                        value=0,
+                        marks={0: "0", 50: "50", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True}
+                    )
+                ],
+                className="p-2"
+            )
+        ],
+        style={
+            "height": "100%",
+            "border": "2px solid #f8f9fa"
+        }
+    )
 
 # Preference categories with image paths
 preference_categories = [
     {"id": "pref1", "name": "Estilos y periodos", "image": "assets/pref1.png"},
     {"id": "pref2", "name": "Compras", "image": "assets/pref2.png"},
     {"id": "pref3", "name": "Museos", "image": "assets/pref3.png"},
-    {"id": "pref4", "name": "Espacios Abiertos", "image": "assets/pref3.png"},
-    {"id": "pref5", "name": "Arquitectura religiosa", "image": "assets/pref3.png"},
-    {"id": "pref6", "name": "Arquitectura defensiva", "image": "assets/pref3.png"},
-    {"id": "pref7", "name": "Arquitectura civil", "image": "assets/pref3.png"},
-    {"id": "pref8", "name": "Gastronomia", "image": "assets/pref3.png"},
+    {"id": "pref4", "name": "Espacios Abiertos", "image": "assets/pref4.png"},
+    {"id": "pref5", "name": "Arquitectura religiosa", "image": "assets/pref5.png"},
+    {"id": "pref6", "name": "Arquitectura defensiva", "image": "assets/pref6.png"},
+    {"id": "pref7", "name": "Arquitectura civil", "image": "assets/pref7.png"},
+    {"id": "pref8", "name": "Gastronomia", "image": "assets/pref8.png"},
     {"id": "pref9", "name": "Deportes", "image": "assets/pref3.png"},
-    {"id": "pref10", "name": "Monumentos", "image": "assets/pref3.png"},
+    {"id": "pref10", "name": "Monumentos", "image": "assets/pref10.png"},
     {"id": "pref11", "name": "Ocio", "image": "assets/pref3.png"},
     {"id": "pref12", "name": "Salud y SPA", "image": "assets/pref3.png"},
     {"id": "pref13", "name": "Eventos", "image": "assets/pref3.png"},
@@ -27,134 +67,56 @@ preference_categories = [
 # Layout
 layout = dbc.Container([
     html.H2("Ahora cuentanos acerca de tus preferencias de turismo:", className="my-4"),
-    html.P("Cuales son las categorias que mas te interesan (clickealas al menos 3 en orden de interes)", className="mb-4"),
+    html.P("Asigna un valor del 0 al 100 a cada categoría según tu interés (mínimo 3)", className="mb-4"),
     
-    # Grid of preference cards (3 rows x 5 columns)
-    *[dbc.Row(
+    # Grid container with fixed width
+    html.Div(
         [
-            dbc.Col(
-                dbc.Card(
-                    [
-                        dbc.CardImg(
-                            src=pref["image"],
-                            top=True,
-                            style={
-                                "height": "120px",
-                                "object-fit": "cover",
-                                "cursor": "pointer"
-                            }
-                        ),
-                        dbc.CardBody(
-                            [
-                                html.H6(
-                                    pref["name"],
-                                    className="card-title text-center",
-                                    style={"font-size": "0.9rem"}
-                                )
-                            ],
-                            className="p-2"
-                        )
-                    ],
-                    id={"type": "pref-card", "index": pref["id"]},
-                    style={
-                        "height": "100%",
-                        "border": "2px solid transparent",
-                        "transition": "all 0.3s"
-                    },
-                    className="h-100"
-                ),
-                width=2.4, 
-                className="mb-3"
-            ) for pref in preference_categories[i:i+5]
+            # Row 1 (Preferences 1-5)
+            dbc.Row([
+                dbc.Col(create_preference_card(pref), 
+                width=2.4, className="mb-4"
+                ) for pref in preference_categories[0:5]
+            ], className="g-3 mb-4"),
+            
+            # Row 2 (Preferences 6-10)
+            dbc.Row([
+                dbc.Col(create_preference_card(pref), 
+                width=2.4, className="mb-4"
+                ) for pref in preference_categories[5:10]
+            ], className="g-3 mb-4"),
+            
+            # Row 3 (Preferences 11-15)
+            dbc.Row([
+                dbc.Col(create_preference_card(pref), 
+                width=2.4, className="mb-4"
+                ) for pref in preference_categories[10:15]
+            ], className="g-3 mb-4")
         ],
-        className="g-3"  # Adds consistent spacing between columns
-    ) for i in range(0, len(preference_categories), 5)],
-    
-    # Hidden div to store selected preferences
-    dcc.Store(id="selected-preferences", data={"selected": [], "order": []}),
+        style={"maxWidth": "1200px", "margin": "0 auto"}
+    ),
     
     # Submit button
-    dbc.Button("Guardar Preferencias", id="save-prefs", color="success", className="mt-4 w-100"),
+    dbc.Button("Guardar Preferencias", 
+               id="save-prefs", 
+               color="success", 
+               className="mt-4 w-100",
+               disabled=True),
+    
+    # Hidden storage
+    dcc.Store(id="preferences-data"),
     
     # Confirmation message
-    html.Div(id="pref-confirmation")
+    html.Div(id="pref-confirmation", className="mt-3")
 ],
-fluid=True, style={"maxWidth": "1200px"})
+fluid=True)
 
+# Callback to enable submit button
 @callback(
-    [Output({"type": "pref-card", "index": ALL}, "style")],
-    [Input({"type": "pref-card", "index": ALL}, "n_clicks")],
-    [State("selected-preferences", "data"),
-     State({"type": "pref-card", "index": ALL}, "style")],
-    prevent_initial_call=True
+    Output("save-prefs", "disabled"),
+    [Input({"type": "pref-slider", "index": ALL}, "value")]
 )
-def update_card_styles(clicks, selected_data, current_styles):
-    ctx = callback_context
-    if not ctx.triggered:
-        return [current_styles]
-    
-    button_id = json.loads(ctx.triggered[0]["prop_id"].split(".")[0])["index"]
-    new_styles = current_styles.copy()
-    
-    for i, style in enumerate(new_styles):
-        pref_id = preference_categories[i]["id"]
-        if pref_id in selected_data["selected"]:
-            style["border"] = "3px solid #0d6efd"  # Bootstrap primary blue
-            style["box-shadow"] = "0 0 10px rgba(13, 110, 253, 0.5)"
-        else:
-            style["border"] = "2px solid transparent"
-            style["box-shadow"] = "none"
-    
-    return [new_styles]
+def enable_submit_button(slider_values):
+    selected_count = sum(1 for val in slider_values if val > 0)
+    return selected_count < 3
 
-# Callback to save preferences
-@callback(
-    Output("pref-confirmation", "children"),
-    Input("save-prefs", "n_clicks"),
-    [State("selected-preferences", "data"),
-     State("user_id", "data")],  # Assuming you pass user_id from previous page
-    prevent_initial_call=True
-)
-
-def save_preferences(n_clicks, pref_data, user_id):
-    if len(pref_data["selected"]) < 3:
-        return dbc.Alert("Por favor selecciona al menos 3 preferencias", color="danger")
-    
-    # Calculate preference scores
-    pref_scores = {}
-    for i, (pref_id, rank) in enumerate(zip(pref_data["selected"], pref_data["order"])):
-        # First selected gets 1, then subtract 0.05 for each position
-        score = max(1 - (0.05 * (rank - 1)), 0)  
-        pref_scores[pref_id] = round(score, 2)
-
-    full_preferences = {}
-    for pref in preference_categories:
-        full_preferences[pref["id"]] = pref_scores.get(pref["id"], 0)
-    
-    # Save to user preferences
-    user_preferences = {
-        user_id: [
-            full_preferences["pref1"],  # Estilos y periodos
-            full_preferences["pref2"],  # Compras
-            full_preferences["pref3"],  # Museos
-            full_preferences["pref4"],  # Espacios Abiertos
-            full_preferences["pref5"],  # Arquitectura religiosa
-            full_preferences["pref6"],  # Arquitectura defensiva
-            full_preferences["pref7"],  # Arquitectura civil
-            full_preferences["pref8"],  # Gastronomia
-            full_preferences["pref9"],  # Deportes
-            full_preferences["pref10"], # Monumentos
-            full_preferences["pref11"], # Ocio
-            full_preferences["pref12"], # Salud y SPA
-            full_preferences["pref13"], # Eventos
-            full_preferences["pref14"], # Niños
-            full_preferences["pref15"]  # Patrimonio de la Humanidad
-        ]
-    }
-    
-    # Save to JSON file
-    with open("user_preferences.json", "a") as f:
-        json.dump(user_preferences, f)
-        f.write("\n")
-    
-    return dbc.Alert("Preferencias guardadas exitosamente!", color="success")
