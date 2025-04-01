@@ -47,7 +47,7 @@ class DemographicRecommender(BaseRecommender):
         return pd.DataFrame(data=relevant)
     
     def compute_scores(self, relevant_items):
-        relevant_items['score'] = 5/100*relevant_items['score1'] + 3/100*relevant_items['score2'] + 2/100* relevant_items['views']
+        relevant_items['score'] = 5/10*relevant_items['score1'] + 3/100*relevant_items['score2'] + 2/38* relevant_items['views']
         relevant_items = relevant_items.sort_values('score', ascending=False)
         return relevant_items.drop_duplicates(subset='item', keep='first')
         
