@@ -1,4 +1,5 @@
 import pandas as pd
+from src.preprocess import cambio_escala, get_all_preferences
 
 class DataLoader():
 
@@ -52,7 +53,7 @@ class DataLoader():
         """
         Load the datos dataset from the given path.
         """
-        return  self.update_type(self._load_file(path, ['item','preference','score']), ['item','score'])
+        return  self.update_type(self._load_file(path, ['item','preference','score']))
     
     def _load_file(self, path: str , columns: list) -> pd.DataFrame:
         """
@@ -82,4 +83,19 @@ class DataLoader():
         for column in columns:
             df[column] = df[column].astype(type)
         return df
+
+class Data():
+    def __init__(self):
+        self.loader= DataLoader()
+        self.preferences = self.loader.load_preferencias()
+        self.users = self.loader.load_usuarios_preferencias()
+        self.items = self.loader.load_items()
+        self.clasificacion_items = self.loader.load_clasificacion_items()
+        self.puntuaciones = self.loader.load_puntuaciones()
+        self.datos_personales = self.loader.load_datos_personales()
+        self.ocupaciones = self.loader.load_ocupaciones()
+        self.puntuaciones_test = self.loader.load_puntuaciones_test()
+        self.all_preferences, self.user_mapping = get_all_preferences(self.preferences, self.users)
+
+
 

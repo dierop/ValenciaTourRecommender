@@ -36,9 +36,8 @@ def get_all_preferences(df_preferences, df_users):
     return all_preferences, user_map
 
 
+def merge_userdata_ocupacion(datos_personales, occupacion):
+    df_merged = datos_personales.merge(occupacion, on='occupation', how='left', suffixes=('', '_ocuppation'))
+    df_merged.rename(columns={'user': 'user_id','name_ocuppation': 'occupation', 'occupation': 'id_occupation', 'y_c_age': 'young_children_age', 'o_c_age': 'older_children_age'}, inplace=True)
 
-def get_best_preferences(all_preferences, user_map, user, n=5):
-    """
-    get the n best preferences of the users
-    """
-    return all_preferences[user_map[user]].argsort()[-n:][::-1]
+    return df_merged
