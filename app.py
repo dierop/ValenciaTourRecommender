@@ -21,7 +21,7 @@ user_info = Data().datos_personales
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     dcc.Location(id='page_redirect', refresh=True),
-    dcc.Store(id="user_id"),
+    dcc.Store(id="user", storage_type="session"),
     html.Div([
         dcc.Link('Inicio', href='/', className='btn btn-primary m-2'), 
         dcc.Link('Preferencias', href='/preferences', className='btn btn-secondary m-2'),
@@ -37,7 +37,7 @@ from pages import preferences
 ############### home.py: cuando Sign up para agregar nuevo usuario ############### 
 @callback(
     [Output("confirmation_message", "children"),
-     Output("user_id", "data"),
+     Output("user", "data"),
      Output("page_redirect", "pathname")], 
     Input("submit_button", "n_clicks"),
     State("edad", "value"),
@@ -52,12 +52,6 @@ from pages import preferences
 def submit_user(n_clicks, edad, sexo, ocupacion, hijos, edad_hijo_menor, edad_hijo_mayor):
     global user_info
 
-    # Validation
-    if edad is None or sexo is None or ocupacion is None:
-        return (dbc.Alert("Por favor, completa todos los campos obligatorios.", color="danger"),
-                user_id, None)
-
-
     # Auto increment user_id
     user_id = user_info['user'].max() + 1 if not user_info.empty else 1
     nombre = f'User_{user_id}'
@@ -66,6 +60,11 @@ def submit_user(n_clicks, edad, sexo, ocupacion, hijos, edad_hijo_menor, edad_hi
     tiene_hijos = 1 if hijos and 1 in hijos else 0
     edad_hijo_menor = edad_hijo_menor if (tiene_hijos and edad_hijo_menor is not None) else 0
     edad_hijo_mayor = edad_hijo_mayor if (tiene_hijos and edad_hijo_mayor is not None) else 0
+
+    # Validation
+    if edad is None or sexo is None or ocupacion is None:
+        return (dbc.Alert("Por favor, completa todos los campos obligatorios.", color="danger"),
+                user_id, None)
 
     # Nuevo usuario
     new_user = {
@@ -103,14 +102,14 @@ def submit_user(n_clicks, edad, sexo, ocupacion, hijos, edad_hijo_menor, edad_hi
     Output("pref-confirmation", "children"),
     Input("save-prefs", "n_clicks"),
     [State({"type": "pref-slider", "index": ALL}, "value"),
-     State("user_id", "data")],     # <--- read from the same store
+     State("user", "data")],    
     prevent_initial_call=True
 )
-def save_preferences(n_clicks, slider_values, user_id):
+def save_preferences(n_clicks, slider_values, user):
     if not n_clicks:
         raise PreventUpdate
 
-    if user_id is None:
+    if user is None:
         return dbc.Alert("❌ No se encontró el ID del usuario.", color="danger", className="mt-3")
 
     try:
@@ -119,7 +118,7 @@ def save_preferences(n_clicks, slider_values, user_id):
             for i, score in enumerate(slider_values):
                 preference_id = str(i + 1)
                 if score > 0:
-                    f.write(f"{user_id}\n{preference_id}\n{score}\n")
+                    f.write(f"{user}\n{preference_id}\n{score}\n")
 
         return dbc.Alert("✅ Preferencias guardadas exitosamente!", color="success", className="mt-3")
 
