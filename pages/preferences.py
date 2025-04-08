@@ -4,7 +4,11 @@ from dash.exceptions import PreventUpdate
 import json
 import datetime
 
-register_page(__name__, path="/preferences")
+register_page(
+    __name__,
+    path='/preferences',
+    title='Preferencias'
+)
 
 def create_preference_card(pref):
     """Helper function to create a consistent preference card"""
@@ -47,21 +51,21 @@ def create_preference_card(pref):
 
 # Preference categories with image paths
 preference_categories = [
-    {"id": "pref1", "name": "Estilos y periodos", "image": "assets/pref1.png"},
-    {"id": "pref2", "name": "Compras", "image": "assets/pref2.png"},
-    {"id": "pref3", "name": "Museos", "image": "assets/pref3.png"},
-    {"id": "pref4", "name": "Espacios Abiertos", "image": "assets/pref4.png"},
-    {"id": "pref5", "name": "Arquitectura religiosa", "image": "assets/pref5.png"},
-    {"id": "pref6", "name": "Arquitectura defensiva", "image": "assets/pref6.png"},
-    {"id": "pref7", "name": "Arquitectura civil", "image": "assets/pref7.png"},
-    {"id": "pref8", "name": "Gastronomia", "image": "assets/pref8.png"},
-    {"id": "pref9", "name": "Deportes", "image": "assets/pref3.png"},
-    {"id": "pref10", "name": "Monumentos", "image": "assets/pref10.png"},
-    {"id": "pref11", "name": "Ocio", "image": "assets/pref3.png"},
-    {"id": "pref12", "name": "Salud y SPA", "image": "assets/pref3.png"},
-    {"id": "pref13", "name": "Eventos", "image": "assets/pref3.png"},
-    {"id": "pref14", "name": "Niños", "image": "assets/pref3.png"},
-    {"id": "pref15", "name": "Patrimonio de la Humanidad", "image": "assets/pref3.png"}
+    {"id": "1", "name": "Estilos y periodos", "image": "assets/pref1.png"},
+    {"id": "2", "name": "Compras", "image": "assets/pref2.png"},
+    {"id": "3", "name": "Museos", "image": "assets/pref3.png"},
+    {"id": "4", "name": "Espacios Abiertos", "image": "assets/pref4.png"},
+    {"id": "5", "name": "Arquitectura religiosa", "image": "assets/pref5.png"},
+    {"id": "6", "name": "Arquitectura defensiva", "image": "assets/pref6.png"},
+    {"id": "7", "name": "Arquitectura civil", "image": "assets/pref7.png"},
+    {"id": "8", "name": "Gastronomia", "image": "assets/pref8.png"},
+    {"id": "9", "name": "Deportes", "image": "assets/pref3.png"},
+    {"id": "10", "name": "Monumentos", "image": "assets/pref10.png"},
+    {"id": "11", "name": "Ocio", "image": "assets/pref3.png"},
+    {"id": "12", "name": "Salud y SPA", "image": "assets/pref3.png"},
+    {"id": "13", "name": "Eventos", "image": "assets/pref3.png"},
+    {"id": "14", "name": "Niños", "image": "assets/pref3.png"},
+    {"id": "15", "name": "Patrimonio de la Humanidad", "image": "assets/pref3.png"}
 ]
 
 # Layout
