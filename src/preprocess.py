@@ -85,3 +85,27 @@ def merge_userdata_ocupacion(datos_personales, occupacion):
     df_merged.rename(columns={'user': 'user_id','name_ocuppation': 'occupation', 'occupation': 'id_occupation', 'y_c_age': 'young_children_age', 'o_c_age': 'older_children_age'}, inplace=True)
 
     return df_merged
+
+def get_neighbours(preferencias, usuarios_preferencias, vecinos=20):
+    """
+    Obtener lista de 20 vecinos y coeficiente de pearson 
+    """
+    preferences, user_map = get_all_preferences(preferencias, usuarios_preferencias)
+    preferences_df = usuarios_preferencias.pivot(index='user', columns='preference', values='score')
+    correlation_matrix = preferences_df.T.corr().round(2)
+
+    top_20_correlations = {}
+
+    for user in correlation_matrix.index:
+        top_users = correlation_matrix[user].drop(user).sort_values(ascending=False).head(vecinos)
+        top_20_correlations[user] = {
+            'vecinos': top_users.index.tolist(),
+            'pearson': top_users.values.tolist()
+        }
+
+    top_20_matrix = pd.DataFrame.from_dict(top_20_correlations, orient='index')
+    top_20_matrix.index.name = 'user_id'
+    top_20_matrix.reset_index(inplace=True)
+
+
+    return top_20_matrix
