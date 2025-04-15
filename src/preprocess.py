@@ -86,11 +86,11 @@ def merge_userdata_ocupacion(datos_personales, occupacion):
 
     return df_merged
 
-def get_neighbours(preferencias, usuarios_preferencias, vecinos=20):
+def get_neighbours(usuarios_preferencias, vecinos=20):
     """
     Obtener lista de 20 vecinos y coeficiente de pearson 
     """
-    preferences, user_map = get_all_preferences(preferencias, usuarios_preferencias)
+
     preferences_df = usuarios_preferencias.pivot(index='user', columns='preference', values='score')
     correlation_matrix = preferences_df.T.corr().round(2)
 

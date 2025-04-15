@@ -3,6 +3,11 @@
 # Linux identifier
 *Zone.Identifier
 __pycache__*
+
 __pycache__/
+*.pyc
 vscode/
 vscode_ws/
+test.ipynb
+src/__pycache__/data_loader.cpython-310.pyc
+src/__pycache__/preprocess.cpython-310.pyc
