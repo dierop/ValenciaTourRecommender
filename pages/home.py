@@ -5,7 +5,11 @@ import threading
 import webbrowser
 
 # Register this page
-register_page(__name__, path="/home")
+register_page(
+    __name__,
+    path='/', 
+    title='Inicio'
+)
 
 # Options for "Ocupación"
 ocupacion_options = [
@@ -58,6 +62,7 @@ layout = dbc.Container(
     Input("signup_button", "n_clicks"),
     prevent_initial_call=True
 )
+
 def display_signup_form(n_clicks):
     return dbc.Card(
         dbc.CardBody([
@@ -108,8 +113,17 @@ def display_signup_form(n_clicks):
                 )
             ], className="mb-3"),
 
-            # Edad hijos (conditionally displayed)
-            html.Div(id="hijos_edades"),
+            # Edad hijos (conditional inputs)
+            html.Div(
+                [
+                    dbc.Input(id="edad_hijo_menor", type="number",
+                              placeholder="Edad hijo menor",
+                              className="mb-2", style={"display": "none"}),
+                    dbc.Input(id="edad_hijo_mayor", type="number",
+                              placeholder="Edad hijo mayor",
+                              className="mb-2", style={"display": "none"})
+                ],
+                id="hijos_edades"),
 
             # Submit Button
             dbc.Button("Enviar", id="submit_button", color="primary", className="w-100 mt-4")
@@ -120,13 +134,20 @@ def display_signup_form(n_clicks):
 
 # Callback to show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"
 @callback(
-    Output("hijos_edades", "children"),
+    [
+        Output("hijos_edades", "children"),
+        Output("hijos_edades", "style")
+    ],
     Input("hijos", "value")
 )
 def toggle_hijos_fields(hijos):
-    if 1 in hijos:
-        return html.Div([
-            dbc.Input(id="edad_hijo_menor", type="number", placeholder="Edad hijo menor", className="mb-2"),
-            dbc.Input(id="edad_hijo_mayor", type="number", placeholder="Edad hijo mayor", className="mb-2")
-        ])
-    return None
+    if hijos and 1 in hijos:
+        return (
+            html.Div([
+                dbc.Input(id="edad_hijo_menor", type="number", placeholder="Edad hijo menor", className="mb-2"),
+                dbc.Input(id="edad_hijo_mayor", type="number", placeholder="Edad hijo mayor", className="mb-2")
+            ]),
+            {"display": "block"}
+        )
+    else:
+        return (None, {"display": "none"})

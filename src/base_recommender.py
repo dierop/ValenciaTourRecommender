@@ -12,7 +12,11 @@ class BaseRecommender(ABC):
         pass
     
     def get_items_visited(self, user_id):
-        return self.data.puntuaciones[self.data.puntuaciones['user'] == user_id]['place'].values
+        try: 
+            visitados= self.data.puntuaciones[self.data.puntuaciones['user'] == user_id]['place'].values
+        except KeyError:
+            visitados = []
+        return visitados
     
     @abstractmethod
     def get_relevant_items(self, preferences, items_visitados)->pd.DataFrame:
