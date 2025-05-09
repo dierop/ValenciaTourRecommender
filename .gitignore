@@ -2,3 +2,7 @@
 .cache
 # Linux identifier
 *Zone.Identifier
+# Linux identifier
+api-key-maps.txt
+api-key.txt
+

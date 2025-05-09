@@ -97,8 +97,7 @@ layout = dbc.Container([
                 ) for pref in preference_categories[10:15]
             ], className="g-3 mb-4")
         ],
-        style={"maxWidth": "1200px", "margin": "0 auto"}
-    ),
+        style={"maxWidth": "1200px", "margin": "0 auto","background-color": "#E0F8E0"}),
     
     # Submit button
     dbc.Button("Guardar Preferencias", 
@@ -113,7 +112,8 @@ layout = dbc.Container([
     # Confirmation message
     html.Div(id="pref-confirmation", className="mt-3")
 ],
-fluid=True)
+fluid=True,
+style={"background-color": "#E0F8E0", "height": "100vh"})
 
 # Callback to enable submit button
 @callback(

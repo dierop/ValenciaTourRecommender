@@ -1,8 +1,8 @@
-from dash import Dash, dcc, html, Output, Input, State, register_page, callback
+from dash import dcc, html, Output, Input, register_page, callback, State
 import dash_bootstrap_components as dbc
-import pandas as pd
-import threading
-import webbrowser
+import dash
+from dash.exceptions import PreventUpdate
+from src.data_loader import Data
 
 # Register this page
 register_page(
@@ -41,7 +41,7 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [
-                    dbc.Input(id="user_id", type="text", placeholder="Introduce tu ID de usuario", className="mb-2"),
+                    dbc.Input(id="register_user", type="text", placeholder="Introduce tu ID de usuario", className="mb-2"),
                     dbc.Button("Login", id="login_button", color="primary", className="me-2"),
                     dbc.Button("Sign Up", id="signup_button", color="success")
                 ],
@@ -50,13 +50,17 @@ layout = dbc.Container(
         ),
 
         html.Div(id="signup_form", style={"marginTop": "30px"}),
-        html.Div(id="confirmation_message")  # Added this to display confirmation messages
+        html.Div(id="confirmation_message", className="mt-3"), #Confirmación de registro    
+        html.Div(id="user_found_message", className="mt-3")  #Confirmación de login
     ],
     fluid=True,
     style={"backgroundColor": "#E0F8E0", "height": "100vh"}  
 )
 
-# Callback to display the signup form
+# ------------------------------------------------------------------- 
+# Callbacks
+
+# 1) Signup form
 @callback(
     Output("signup_form", "children"),
     Input("signup_button", "n_clicks"),
@@ -132,7 +136,7 @@ def display_signup_form(n_clicks):
     )
 
 
-# Callback to show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"
+# 2) Show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"
 @callback(
     [
         Output("hijos_edades", "children"),
@@ -151,3 +155,5 @@ def toggle_hijos_fields(hijos):
         )
     else:
         return (None, {"display": "none"})
+    
+
