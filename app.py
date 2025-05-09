@@ -229,7 +229,12 @@ def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
         "algorithms": algos,
         "weights": weight_map,
     }
-    return (data, dbc.Alert("✅ Parámetros guardados en sesión. ¡Listo para calcular!", color="success"))
+    
+    # Save to file (ver si vale la pena guardar en un archivo)
+    with open("data/recommender_configs.txt", "w") as f:
+        f.write(f"{data['n_items']}\n{data['algorithms']}\n{data['weights']}\n")
+
+    return (data, dbc.Alert("✅ Parámetros guardados en sesión. Buscando la mejor recomendación...", color="success"))
 
 
 # Function to open browser automatically
