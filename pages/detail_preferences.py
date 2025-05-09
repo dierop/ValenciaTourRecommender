@@ -34,32 +34,41 @@ pref_categories = [
 
 # ------------------------------------------------------------------------------
 # Layout
-layout = dbc.Container(
-    [
-        html.H3("¿Quieres agregar más detalle de tus preferencias?"),
-        html.P("Marca la(s) categoría(s) que quieras detallar o deja todo vacío si no deseas añadir detalles:"),
-        dcc.Checklist(
-            id="detail-cat-checklist",
-            options=[{"label": c["name"], "value": c["id"]} for c in pref_categories],
-            value=[],
-            inputStyle={"margin-right": "6px"},
-            style={"margin-bottom": "1rem"}
-        ),
+# ----------------------------------------------------------------- Layout ----
+layout = html.Div(                       # ① wrapper used by the CSS
+    className="detail-page",
+    children=[
+        dbc.Card(                        # ② the soft card
+            className="detail-card",
+            children=[
+                html.H3("¿Quieres agregar más detalle de tus preferencias?"),
+                html.P("Marca la(s) categoría(s) que quieras detallar o deja todo vacío si no deseas añadir detalles:"),
+                dcc.Checklist(
+                    id="detail-cat-checklist",
+                    className="detail-cat-checklist",
+                    options=[{"label": c["name"], "value": c["id"]} for c in pref_categories],
+                    value=[],
+                    inputStyle={"margin-right": "6px"},
+                ),
 
-        # Dynamic sub-preferences will appear here
-        html.Div(id="subpref-container"),
+                html.Hr(),
 
-        dbc.Button("Guardar detalle", id="save-subprefs", color="primary", className="mt-3"),
-        html.Div(id="subpref-confirmation", className="mt-3"),
-    ],
-    style={"background-color": "#E0F8E0", "height": "100vh"},
-    className="pt-4"
+                # Dynamic sub-preferences
+                html.Div(id="subpref-container"),
+
+                dbc.Button(
+                    "Guardar detalle",
+                    id="save-subprefs",
+                    color="primary",             
+                    className="btn-teal mt-4",    
+                ),
+                html.Div(id="subpref-confirmation", className="mt-3"),
+            ],
+        )
+    ]
 )
 
-# ------------------------------------------------------------------------------
-# Callbacks
-
-# Build sub-preference inputs every time the user (un)checks a category
+# -------------------------------------------------------------- Callbacks ----
 @callback(
     Output("subpref-container", "children"),
     Input("detail-cat-checklist", "value"),
@@ -71,32 +80,27 @@ def build_subpref_inputs(selected_cat_ids):
     children = []
     for cat_id in selected_cat_ids:
         cat_name = next(c["name"] for c in pref_categories if c["id"] == cat_id)
-
         subprefs = prefs_df[prefs_df["father"].astype(int) == int(cat_id)]
 
         if subprefs.empty:
             continue
 
         children.append(html.H5(cat_name, className="mt-4"))
-
         for _, row in subprefs.iterrows():
             children.append(
                 dbc.Row(
                     [
-                        dbc.Col(html.Span(f"{row['preference']}. {row['name']}"), width=8),
+                        dbc.Col(f"{row['preference']}. {row['name']}", width=9),
                         dbc.Col(
                             dcc.Input(
                                 id={"type": "subpref-score", "index": str(row["preference"])},
-                                type="number",
-                                min=0, max=100, step=5, value=0,
-                                className="form-control"
+                                type="number", min=0, max=100, step=5, value=0,
+                                className="form-control",
                             ),
-                            width=3
+                            width=3,
                         ),
                     ],
-                    className="mb-2 gx-2"
+                    className="mb-2 subpref-row"      
                 )
             )
-
     return children
-

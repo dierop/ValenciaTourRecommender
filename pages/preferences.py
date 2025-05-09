@@ -10,44 +10,30 @@ register_page(
     title='Preferencias'
 )
 
+from src.data_loader import Data
+user_info = Data().datos_personales
+
 def create_preference_card(pref):
-    """Helper function to create a consistent preference card"""
     return dbc.Card(
         [
-            dbc.CardImg(
-                src=pref["image"],
-                top=True,
-                style={
-                    "height": "120px",
-                    "object-fit": "cover",
-                    "width": "100%"
-                }
-            ),
+            dbc.CardImg(src=pref["image"], className="pref-img"),
             dbc.CardBody(
                 [
-                    html.H6(
-                        pref["name"],
-                        className="card-title text-center",
-                        style={"fontSize": "0.9rem"}
-                    ),
+                    html.Div(pref["name"], className="text-center fw-semibold mb-2",
+                             style={"fontSize":".85rem"}),
                     dcc.Slider(
                         id={"type": "pref-slider", "index": pref["id"]},
-                        min=0,
-                        max=100,
-                        step=5,
-                        value=0,
-                        marks={0: "0", 50: "50", 100: "100"},
-                        tooltip={"placement": "bottom", "always_visible": True}
-                    )
+                        min=0, max=100, step=5, value=0,
+                        marks={0:"0", 50:"50", 100:"100"},
+                        tooltip={"placement":"bottom","always_visible":True},
+                    ),
                 ],
-                className="p-2"
+                className="p-2",
             )
         ],
-        style={
-            "height": "100%",
-            "border": "2px solid #f8f9fa"
-        }
+        className="pref-card h-100"
     )
+
 
 # Preference categories with image paths
 preference_categories = [
@@ -61,11 +47,11 @@ preference_categories = [
     {"id": "8", "name": "Gastronomia", "image": "assets/pref8.png"},
     {"id": "9", "name": "Deportes", "image": "assets/pref3.png"},
     {"id": "10", "name": "Monumentos", "image": "assets/pref10.png"},
-    {"id": "11", "name": "Ocio", "image": "assets/pref3.png"},
-    {"id": "12", "name": "Salud y SPA", "image": "assets/pref3.png"},
-    {"id": "13", "name": "Eventos", "image": "assets/pref3.png"},
-    {"id": "14", "name": "Niños", "image": "assets/pref3.png"},
-    {"id": "15", "name": "Patrimonio de la Humanidad", "image": "assets/pref3.png"}
+    {"id": "11", "name": "Ocio", "image": "assets/pref11.png"},
+    {"id": "12", "name": "Salud y SPA", "image": "assets/pref12.png"},
+    {"id": "13", "name": "Eventos", "image": "assets/pref13.png"},
+    {"id": "14", "name": "Niños", "image": "assets/pref14.png"},
+    {"id": "15", "name": "Patrimonio de la Humanidad", "image": "assets/pref15.png"}
 ]
 
 # Layout
@@ -103,6 +89,7 @@ layout = dbc.Container([
     dbc.Button("Guardar Preferencias", 
                id="save-prefs", 
                color="success", 
+               style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"},
                className="mt-4 w-100",
                disabled=True),
     
@@ -113,7 +100,11 @@ layout = dbc.Container([
     html.Div(id="pref-confirmation", className="mt-3")
 ],
 fluid=True,
-style={"background-color": "#E0F8E0", "height": "100vh"})
+style={
+        'backgroundColor': '#E0F8E0', 'position': 'fixed',
+        'top': 0,        'left': 0,        'bottom': 0,        'right': 0,
+        'overflow': 'auto'  # Allows scrolling if content exceeds viewport
+    })
 
 # Callback to enable submit button
 @callback(

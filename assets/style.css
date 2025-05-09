@@ -1,6 +1,224 @@
-.card-img-top {
-    transition: all 0.3s ease;
+/* -----------------------------------------------------------
+   0.  Google Fonts
+----------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* -----------------------------------------------------------
+   1.  Global
+----------------------------------------------------------- */
+:root {
+  --primary-green: #57a24f;   /* banner */
+  --secondary-teal: #8ECAE6;  /* new secondary btn */
+  --darker-teal: #5b93ad;
+  --darkest-teal: #417086;
 }
-.card-img-top:hover {
-    opacity: 0.8;
+
+html, body {
+  height: 100%;
+  background-color:#f7fff7;   /* very light mint */
+  font-family: 'Poppins', sans-serif;
 }
+
+/* -----------------------------------------------------------
+   2.  Header / hero
+----------------------------------------------------------- */
+.app-header {
+  background-color: var(--primary-green);
+  color:#fff;
+  padding: 1.2rem 0;
+  text-align:center;
+}
+
+.app-header h1 {
+  font-weight:600;
+  margin:0;
+}
+
+/* -----------------------------------------------------------
+   3.  Buttons
+----------------------------------------------------------- */
+.btn-secondary {
+  background-color: var(--secondary-teal) !important;
+  border-color:   var(--secondary-teal) !important;
+  color:#fff;
+}
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color:#36a68a !important;   /* a bit darker teal */
+  border-color:#36a68a  !important;
+}
+
+/* Keep primary/ success as they are,  
+   but add a subtle shadow when focused */
+.btn:focus {
+  box-shadow: 0 0 0 .15rem rgba(33, 37, 41, .25);
+}
+
+/* -----------------------------------------------------------
+   4.  Card that contains the login form
+----------------------------------------------------------- */
+.login-card {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2.5rem 2rem;
+  background-color: #ffffffd2;      /* translucent white */
+  border-radius: 1.5rem;            /* = rounded-4 */
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* -----------------------------------------------------------
+   5.  Input field tweaks
+----------------------------------------------------------- */
+input.form-control {
+  height: calc(1.6em + .75rem + 2px);      /* slightly taller */
+  font-size: 1.1rem;
+  border-radius: .8rem;
+}
+
+/* Tooltip that appears when the browser auto-fills      (arrow + black box in screenshot) */
+input.form-control::-webkit-input-placeholder { color:#7d7d7d; font-weight:300 }
+
+
+/* -----------------------------------------------------------------
+   Preferences page
+------------------------------------------------------------------*/
+
+/* 1)   make every card the same visual width and shadow */
+.pref-card {
+  border: none;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  transition: transform .15s ease;
+}
+.pref-card:hover { transform: translateY(-4px); }
+
+/* 2)   image: keep aspect ratio, never stretch, fixed height */
+.pref-card img {
+  height: 110px;               /* adjust once for all images      */
+  width: 100%;
+  object-fit: cover;           /* crop (if horizontal) OR */
+  object-position: 50% 40%;    /* tweak crop position a bit       */
+}
+
+/* If you prefer letter-boxing instead of cropping use object-fit:contain
+   and a light background:
+   object-fit: contain;
+   background: #f0f0f0;
+*/
+
+/* 3)   compact slider tooltip so it doesn’t cover the next card */
+.rc-slider-tooltip {
+  font-size: .7rem !important;
+  padding: 0 4px !important;
+}
+
+/* 4)   darken slider track when value > 0 for easy visual feedback */
+.rc-slider-track {
+  background-color: var(--secondary-teal, #8ECAE6);
+}/* ====================================================================
+   Detail-preferences page
+   (Everything lives inside <div class="detail-page"> … )
+===================================================================== */
+
+/* 0)  uniform background over the full viewport */
+.detail-page {
+  min-height: 100vh;
+  background: #E8F9E8;                 /* a tiny bit lighter than before */
+  padding: 2rem 0;                     /* top / bottom breathing room   */
+}
+
+/* 1)  hide the global nav bar ONLY on this page */
+.detail-page ~ .top-nav,
+.detail-page + .top-nav { display:none !important; }
+
+/*  (If your nav bar has another class / id just change the selector) */
+
+/* 2)  wrap the form in a soft card so it doesn’t float on the bg */
+.detail-card {
+  max-width: 900px;
+  margin: 0 auto;                      /* centre */
+  background: #ffffffc9;               /* translucent white */
+  border-radius: 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 2.5rem 2rem;
+}
+
+/* 3)  custom teal button
+       NB: override bootstrap on *all* states                                  */
+.btn-teal       { background:#5b93ad !important; border-color:#5b93ad !important; }
+.btn-teal:hover { background:#4A7F94 !important; border-color:#4A7F94 !important; }
+.btn-teal:focus { background:#4A7F94 !important; border-color:#4A7F94 !important;
+                  box-shadow:0 0 0 .15rem rgba(91,147,173,.4) }
+
+/* 4)  nicer checklist spacing */
+.detail-cat-checklist .form-check { margin-bottom: .3rem; font-size:1.02rem; }
+
+/* 5)  columns for the sub-preferences: label left / input right */
+.subpref-row { align-items:center; }
+.subpref-row input { max-width:110px; margin-left:auto; }
+
+
+/* ================================================================
+   Recommender page
+=============================================================== */
+
+/* wrapper around the page – see python patch */
+.recommender-page {
+  min-height: 100vh;
+  background: #E8F9E8;
+  padding: 2rem 0;
+}
+
+/* hide the nav only on this route (adapt selector if nav id changes) */
+.recommender-page ~ .top-nav,
+.recommender-page +  .top-nav { display:none !important; }
+
+/* card */
+.recommender-card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #ffffffc9;
+  border-radius: 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 2.5rem 2rem;
+}
+
+/* teal button (same rules we created earlier) */
+.btn-teal       { background:#5b93ad !important; border-color:#5b93ad !important; }
+.btn-teal:hover { background:#4A7F94 !important; border-color:#4A7F94 !important; }
+.btn-teal:focus { background:#4A7F94 !important; border-color:#4A7F94 !important;
+                  box-shadow:0 0 0 .15rem rgba(91,147,173,.4) }
+/* ===============================================================
+   Results page
+================================================================ */
+
+/* wrapper (see python patch) */
+.results-page {
+  min-height: 100vh;
+  background: #E8F9E8;
+  padding: 2rem 0;
+}
+
+/* hide global nav only here */
+.results-page ~ #top-nav,
+.results-page +  #top-nav { display:none !important; }
+
+/* card */
+.results-card {
+  max-width: 950px;
+  margin: 0 auto;
+  background: #ffffffc9;             /* translucent white */
+  border-radius: 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 2.5rem 2rem;
+}
+
+/* teal button (same colour set you used before) */
+.btn-teal       { background:#5b93ad !important; border-color:#5b93ad !important; }
+.btn-teal:hover { background:#4A7F94 !important; border-color:#4A7F94 !important; }
+.btn-teal:focus { background:#4A7F94 !important; border-color:#4A7F94 !important;
+                  box-shadow:0 0 0 .15rem rgba(91,147,173,.4) }
+
+/* a bit of air between place blocks */
+.place-block { margin-bottom: 1.5rem; }

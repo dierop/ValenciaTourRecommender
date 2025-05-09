@@ -23,14 +23,17 @@ app.layout = html.Div([
     dcc.Location(id='page_pref_redirect', refresh=True),
     dcc.Location(id='page_detail_redirect', refresh=True),
     dcc.Location(id='page_recs_redirect',    refresh=True),
+    dcc.Location(id='page_results_redirect', refresh=True),
     dcc.Store(id="user", storage_type="session"),
     dcc.Store(id="rec_settings", storage_type="session"),
     html.Div([
         dcc.Link('Inicio', href='/', className='btn btn-primary m-2'), 
         dcc.Link('Preferencias', href='/preferences', className='btn btn-secondary m-2'),
         dcc.Link('Subpreferencias', href='/detail_preferences', className='btn btn-success m-2'),
-        dcc.Link('Recomendador',    href='/recommender',       className='btn btn-warning m-2'),
-    ], className='text-center'),
+        dcc.Link('Algoritmos',    href='/recommender',       className='btn btn-warning m-2'),
+        dcc.Link('Recomendacion',    href='/results',       className='btn btn-warning m-2'),
+    ], 
+    id="top-nav", className='text-center'),
     
     dash.page_container
 ])
@@ -40,6 +43,18 @@ from pages import home
 from pages import preferences
 from pages import detail_preferences  
 from pages import recommender  
+
+# app.py  Callback para ocultar el navbar
+
+@callback(
+    Output("top-nav", "style"),
+    Input("url", "pathname"),
+)
+def hide_nav_on_detail(pathname):
+    hidden_pages = {"/detail_preferences", "/recommender", "/results"} 
+    if pathname in hidden_pages:
+        return {"display": "none"}
+    return {}
 
 ############### home.py: cuando Sign up para agregar nuevo usuario ############### 
 @callback(
@@ -202,11 +217,11 @@ def save_detail_prefs(n_clicks, scores, id_objects, user):
                 dash.no_update)
 
 
-############### detail_preferences.py: Callback to save config recomendaciones ############### 
-# 2) Guardar config en Store  
+############### recommender.py: Callback to save config recomendaciones ############### 
 @callback(
     [Output("rec_settings", "data"),
-    Output("recs-confirmation", "children")],
+    Output("recs-confirmation", "children"),
+    Output("page_results_redirect", "pathname")],
     Input("get-recs-btn", "n_clicks"),
     State("n-rec-input", "value"),
     State("algo-checklist", "value"),
@@ -229,12 +244,10 @@ def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
         "algorithms": algos,
         "weights": weight_map,
     }
-    
-    # Save to file (ver si vale la pena guardar en un archivo)
-    with open("data/recommender_configs.txt", "w") as f:
-        f.write(f"{data['n_items']}\n{data['algorithms']}\n{data['weights']}\n")
 
-    return (data, dbc.Alert("✅ Parámetros guardados en sesión. Buscando la mejor recomendación...", color="success"))
+    return (data, 
+            dbc.Alert("✅ Parámetros guardados en sesión. Buscando la mejor recomendación...", color="success"),
+            "/results")
 
 
 # Function to open browser automatically

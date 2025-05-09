@@ -26,6 +26,23 @@ ocupacion_options = [
     {"label": "Inactivo o desocupado", "value": "11"}
 ]
 
+login_form = dbc.Card(
+    dbc.CardBody(
+        [
+            dcc.Input(
+                id="register_user",
+                type="text",
+                placeholder="Introduce tu ID de usuario",
+                className="form-control mb-3",
+            ),
+            dbc.Button("Login",   id="login_button", color="primary",                      
+                        style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"}, className="me-2",),
+            dbc.Button("Sign Up", id="signup_button", color="secondary"),
+        ]
+    ),
+    className="login-card"
+)
+
 # App Layout
 layout = dbc.Container(
     [
@@ -33,7 +50,7 @@ layout = dbc.Container(
             dbc.Col(
                 html.H1("Hola, bienvenidos a tu guía turística de Valencia!", 
                         className="text-center text-white my-4", 
-                        style={"background-color": "#4CAF50", "padding": "10px", "border-radius": "10px"}),
+                        style={"background-color": "#36a68a", "padding": "10px", "border-radius": "10px"}),
                 width=12
             )
         ),
@@ -41,9 +58,7 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [
-                    dbc.Input(id="register_user", type="text", placeholder="Introduce tu ID de usuario", className="mb-2"),
-                    dbc.Button("Login", id="login_button", color="primary", className="me-2"),
-                    dbc.Button("Sign Up", id="signup_button", color="success")
+                    login_form,
                 ],
                 width=6, className="offset-md-3 text-center"
             )
@@ -54,7 +69,11 @@ layout = dbc.Container(
         html.Div(id="user_found_message", className="mt-3")  #Confirmación de login
     ],
     fluid=True,
-    style={"backgroundColor": "#E0F8E0", "height": "100vh"}  
+    style={
+        'backgroundColor': '#E0F8E0', 'position': 'fixed',
+        'top': 0,        'left': 0,        'bottom': 0,        'right': 0,
+        'overflow': 'auto'  # Allows scrolling if content exceeds viewport
+    }, 
 )
 
 # ------------------------------------------------------------------- 
@@ -130,7 +149,7 @@ def display_signup_form(n_clicks):
                 id="hijos_edades"),
 
             # Submit Button
-            dbc.Button("Enviar", id="submit_button", color="primary", className="w-100 mt-4")
+            dbc.Button("Enviar", id="submit_button", color="primary",style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"}, className="w-100 mt-4")
         ]),
         style={"maxWidth": "800px", "margin": "auto", "marginTop": "20px", "backgroundColor": "#f8f9fa", "padding": "20px", "borderRadius": "10px"}
     )

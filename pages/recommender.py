@@ -11,52 +11,63 @@ register_page(
     title="Recomendaciones"
 )
 
+from src.data_loader import Data
+user_info = Data().datos_personales
+
 # --------------------------------------------------------------------- 
 # layout
 
-layout = dbc.Container(
-    [
-        html.H2("Centro de recomendaciones", className="mb-4"),
+# --------------------------------------------------------------------- layout
+layout = html.Div(                          # ① page wrapper
+    className="recommender-page",
+    children=[
+        dbc.Card(                           # ② translucent card
+            className="recommender-card",
+            children=[
+                html.H2("Centro de recomendaciones", className="mb-4"),
 
-        # Nº de ítems a recomendar
-        dbc.Row(
-            [
-                dbc.Col("Seleccione cuántas recomendaciones desea obtener:", width=8),
-                dbc.Col(
-                    dcc.Input(
-                        id="n-rec-input",
-                        type="number",
-                        min=1, max=10, step=1,
-                        placeholder="Hasta 10",
-                        className="form-control"
-                    ),
-                    width=3,
+                dbc.Row(
+                    [
+                        dbc.Col("Seleccione cuántas recomendaciones desea obtener:", width=8),
+                        dbc.Col(
+                            dcc.Input(
+                                id="n-rec-input",
+                                type="number",
+                                min=1, max=10, step=1,
+                                placeholder="Hasta 10",
+                                className="form-control",
+                            ),
+                            width=3,
+                        ),
+                    ],
+                    className="mb-4 gx-2",
                 ),
+
+                html.H5("Seleccione qué sistema(s) desea usar:"),
+                dcc.Checklist(
+                    id="algo-checklist",
+                    options=[
+                        {"label": "Demográfico",            "value": "demografico"},
+                        {"label": "Colaborativo (vecinos)", "value": "colaborativo"},
+                        {"label": "Basado en contenido",    "value": "contenido"},
+                    ],
+                    value=[],
+                    inputStyle={"margin-right": "6px"},
+                    className="mb-3",
+                ),
+
+                html.Div(id="weight-slider-container"),
+
+                dbc.Button(
+                    "Obtener recomendaciones",
+                    id="get-recs-btn",
+                    color="primary",              # required arg
+                    className="btn-teal mt-2",    # teal override
+                ),
+                html.Div(id="recs-confirmation", className="mt-3"),
             ],
-            className="mb-4 gx-2"
-        ),
-
-        # Checklist de sistemas recomendadores 
-        html.H5("Seleccione qué sistema(s) desea usar:"),
-        dcc.Checklist(
-            id="algo-checklist",
-            options=[
-                {"label": "Demográfico",              "value": "demografico"},
-                {"label": "Colaborativo (vecinos)",   "value": "colaborativo"},
-                {"label": "Basado en contenido",      "value": "contenido"},
-            ],
-            value=[],
-            inputStyle={"margin-right": "6px"},
-            className="mb-3"
-        ),
-
-        # Sliders para los pesos aparecerán aquí ----------------------------------
-        html.Div(id="weight-slider-container"),
-
-        dbc.Button("Obtener recomendaciones", id="get-recs-btn", color="primary"),
-        html.Div(id="recs-confirmation", className="mt-3"),
-    ],
-    className="pt-4"
+        )
+    ]
 )
 
 # ------------------------------------------------------------------- 
