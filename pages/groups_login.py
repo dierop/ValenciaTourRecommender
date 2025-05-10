@@ -11,13 +11,13 @@ register_page(
     title="Recomendación grupal"
 )
 
-USER_OPTIONS = [{"label": str(i), "value": str(i)} for i in range(1, 181)]
+USER_OPTIONS = [{"label": str(i), "value": str(i)} for i in range(123, 181)]
 MAX_INDIVIDUOS = 10
 
 def _build_user_dropdown(idx: int) -> dbc.Row:
     return dbc.Row(
         [
-            dbc.Col(html.Span(f"Usuario #{idx+1}:"), width=3, className="pt-2"),
+            dbc.Col(html.Span(f"Usuario {idx+1}:"), width=3, className="pt-2"),
             dbc.Col(
                 dcc.Dropdown(
                     id={"type": "user_id_dd", "index": idx},
@@ -30,6 +30,14 @@ def _build_user_dropdown(idx: int) -> dbc.Row:
         ],
         className="mb-2",
     )
+
+navbar = dbc.NavbarSimple(
+    brand        = "Mi Guía Valencia",
+    color        = "primary",
+    dark         = True,
+    className    = "mb-4",
+    id="main-navbar",
+)
 
 # --- layout ---------------------------------------------------------------
 layout = dbc.Container(
@@ -69,9 +77,8 @@ layout = dbc.Container(
                             dbc.Button(
                                 "Obtener recomendación",
                                 id="grupo_continuar_btn",
-                                color="primary",
-                                className="mt-4 w-100",
-                            ),
+                                color="secondary",
+                                className="btn-teal mb-4"),
                         ]
                     ),
                     className="login-card",
@@ -80,7 +87,8 @@ layout = dbc.Container(
                 className="offset-md-2",
             )
         ),
-    ],
+    html.Div(id="group_user_found_message", className="mt-3")],   
+    className="login-page-groups",        
     fluid=True,
     style={
         "backgroundColor": "#E0F8E0",

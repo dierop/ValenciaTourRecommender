@@ -6,9 +6,9 @@ from dash.exceptions import PreventUpdate
 
 register_page(
     __name__,
-    path="/recommender",
-    name="Recomendador",
-    title="Recomendaciones"
+    path="/groups_recommender",
+    name="Recomendador grupal",
+    title="Recomendaciones para grupos",
 )
 
 from src.data_loader import Data
@@ -19,7 +19,7 @@ user_info = Data().datos_personales
 
 # --------------------------------------------------------------------- layout
 layout = html.Div(                          # ① page wrapper
-    className="recommender-page",
+    className="recommender-page-groups",
     children=[
         dbc.Card(                           # ② translucent card
             className="recommender-card",
@@ -75,7 +75,7 @@ layout = html.Div(                          # ① page wrapper
 # Callbacks
 
 @callback(
-    Output("weight-slider-container", "children"),
+    Output("weight-slider-container-groups", "children"),
     Input("algo-checklist-groups", "value"),
 )
 def build_sliders(selected_algos):

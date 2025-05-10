@@ -64,7 +64,7 @@ from pages import recommender
     Input("url", "pathname"),
 )
 def hide_nav_on_detail(pathname):
-    hidden_pages = {"/detail_preferences", "/recommender", "/results"} 
+    hidden_pages = {"/detail_preferences", "/recommender", "/results", "/groups_login", "/groups_recommender", "/groups_results"} 
     if pathname in hidden_pages:
         return {"display": "none"}
     return {}
@@ -286,10 +286,12 @@ def save_group_ids(n_clicks, selected_ids):
         raise PreventUpdate
 
     cleaned = [int(uid) for uid in selected_ids if uid is not None]
-    cleaned = list(dict.fromkeys(cleaned))          
+    cleaned_text = [str(uid) for uid in selected_ids if uid is not None]
+    cleaned = list(dict.fromkeys(cleaned))
+    text = ", ".join(cleaned_text)         
 
     return (
-        dbc.Alert(f"✅ Grupo de {", ".join(cleaned)} individuos registrado",  color="success"),
+        dbc.Alert(f"✅ Grupo de {text} individuos registrado",  color="success"),
         cleaned, 
         "/groups_recommender"  
             )       

@@ -222,3 +222,14 @@ input.form-control::-webkit-input-placeholder { color:#7d7d7d; font-weight:300 }
 
 /* a bit of air between place blocks */
 .place-block { margin-bottom: 1.5rem; }
+
+
+/* hide global nav only for group pages */
+.results-page-groups ~ #top-nav,
+.results-page-groups +  #top-nav { display:none !important; }
+
+.recommender-page-groups ~ #top-nav,
+.recommender-page-groups +  #top-nav { display:none !important; }
+
+.login-page-groups ~ #top-nav,
+.login-page-groups +  #top-nav { display:none !important; }
