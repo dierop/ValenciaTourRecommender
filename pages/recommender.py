@@ -43,13 +43,15 @@ layout = html.Div(                          # ① page wrapper
                     className="mb-4 gx-2",
                 ),
 
-                html.H5("Seleccione qué sistema(s) desea usar:"),
+                html.H5("Seleccione qué sistema(s) desea usar o si los quiere combinar en u:"),
                 dcc.Checklist(
                     id="algo-checklist",
                     options=[
                         {"label": "Demográfico",            "value": "demografico"},
                         {"label": "Colaborativo (vecinos)", "value": "colaborativo"},
                         {"label": "Basado en contenido",    "value": "contenido"},
+                        {"label": "Grupos",    "value": "grupos"},
+                        {"label": "Híbrido",    "value": "hibrido"},
                     ],
                     value=[],
                     inputStyle={"margin-right": "6px"},
@@ -83,12 +85,14 @@ def build_sliders(selected_algos):
         return dbc.Alert("Marca al menos un sistema recomendador.", color="info")
 
     sliders = []
-    for algo in selected_algos:
-        label = {
-            "demografico":  "Peso demográfico",
-            "colaborativo": "Peso colaborativo",
-            "contenido":    "Peso de contenido",
-        }[algo]
+    if "hibrido" in selected_algos:
+        for algo in selected_algos:
+            label = {
+                "demografico":  "Peso demográfico",
+                "colaborativo": "Peso colaborativo",
+                "contenido":    "Peso de contenido",
+                "grupos": "Peso grupos",
+            }[algo]
 
         sliders.append(
             dbc.Row(
