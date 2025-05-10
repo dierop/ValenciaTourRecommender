@@ -220,8 +220,8 @@ def save_detail_prefs(n_clicks, scores, id_objects, user):
 ############### recommender.py: Callback to save config recomendaciones ############### 
 @callback(
     [Output("rec_settings", "data"),
-    Output("recs-confirmation", "children"),
-    Output("page_results_redirect", "pathname")],
+     Output("recs-confirmation", "children"),
+     Output("page_results_redirect", "pathname")],
     Input("get-recs-btn", "n_clicks"),
     State("n-rec-input", "value"),
     State("algo-checklist", "value"),
@@ -229,15 +229,16 @@ def save_detail_prefs(n_clicks, scores, id_objects, user):
     State({"type": "weight-slider", "index": ALL}, "id"),
     prevent_initial_call=True,
 )
-
 def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
     if not n_clicks:
         raise PreventUpdate
     if n_items is None or n_items <= 0:
-        return dash.no_update, dbc.Alert("Introduce un número de recomendaciones válido.", color="danger")
+        return dash.no_update, dbc.Alert("Introduce un número de recomendaciones válido.", color="danger"), dash.no_update
 
-    # Build dict  algo -> weight (0-100)  keeping order of slider_ids
-    weight_map = {id_["index"]: w for w, id_ in zip(weights, slider_ids)}
+    # Weights to 0 if not selected and mantain order for "hibrido"
+    raw_weight_map = {id_["index"]: w for w, id_ in zip(weights, slider_ids)}
+    ordered_algos = ["demografico", "contenido", "colaborativo"]
+    weight_map = {algo: raw_weight_map.get(algo, 0) for algo in ordered_algos}
 
     data = {
         "n_items": n_items,
@@ -245,9 +246,12 @@ def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
         "weights": weight_map,
     }
 
-    return (data, 
-            dbc.Alert("✅ Parámetros guardados en sesión. Buscando la mejor recomendación...", color="success"),
-            "/results")
+    return (
+        data,
+        dbc.Alert("✅ Parámetros guardados en sesión. Buscando la mejor recomendación...", color="success"),
+        "/results"
+    )
+
 
 
 # Function to open browser automatically

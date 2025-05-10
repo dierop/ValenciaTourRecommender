@@ -6,7 +6,8 @@ from dash.exceptions import PreventUpdate
 
 from src.demographic_recommender import DemographicRecommender
 from src.content_recommender     import ContentRecommender
-# from src.collaborative_recommender import CollaborativeRecommender  # faltaria implementar
+from src.collaborative_recommender import CollaborativeRecommender  
+from src.hybrid_recommender import HybridRecommender  
 from src.utils_google import get_place_details                      
 
 register_page(__name__, path="/results", name="Resultados")
@@ -85,16 +86,35 @@ def build_results(_pathname, user_id, rec_settings):
                 )
 
     # --- COLABORATIVO ----------------------------------------------
-    #if "colaborativo" in algos:
-        #cl  = ColabRecommender()
-        #rec = cl.recommend(user_id=user_id, n=n)
-        #if rec:
-        #    children.append(html.H4("Recomendaciones basadas en algoritmo colaborativo"))
+    if "colaborativo" in algos:
+        cl  = CollaborativeRecommender()
+        rec = cl.recommend(user_id=user_id, n=n)
+        if rec:
+            children.append(html.H4("Recomendaciones basadas en algoritmo colaborativo"))
 
-        #    for pid, pname, score, _ in rec:
-        #        children.extend(
-        #            _render_place_line(pid, pname, score)
-        #        )
+            for pid, pname, score, _ in rec:
+                children.extend(
+                    _render_place_line(pid, pname, score)
+                )
+
+    if not children:
+        children.append(
+            dbc.Alert("No se generaron recomendaciones.", color="warning")
+        )
+
+    return children
+
+# --- HIBRIDO ----------------------------------------------
+    if "hibrido" in algos:
+        cl  = CollaborativeRecommender()
+        rec = cl.recommend(user_id=user_id, n=n)
+        if rec:
+            children.append(html.H4("Recomendaciones basadas en algoritmo colaborativo"))
+
+            for pid, pname, score, _ in rec:
+                children.extend(
+                    _render_place_line(pid, pname, score)
+                )
 
     if not children:
         children.append(

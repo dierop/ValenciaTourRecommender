@@ -48,8 +48,8 @@ layout = html.Div(                          # ① page wrapper
                     id="algo-checklist",
                     options=[
                         {"label": "Demográfico",            "value": "demografico"},
-                        {"label": "Colaborativo (vecinos)", "value": "colaborativo"},
                         {"label": "Basado en contenido",    "value": "contenido"},
+                        {"label": "Colaborativo (vecinos)", "value": "colaborativo"},
                         {"label": "Grupos",    "value": "grupos"},
                         {"label": "Híbrido",    "value": "hibrido"},
                     ],
@@ -75,7 +75,6 @@ layout = html.Div(                          # ① page wrapper
 # ------------------------------------------------------------------- 
 # Callbacks
 
-# 1) Mostrar / ocultar sliders según los checks 
 @callback(
     Output("weight-slider-container", "children"),
     Input("algo-checklist", "value"),
@@ -84,36 +83,42 @@ def build_sliders(selected_algos):
     if not selected_algos:
         return dbc.Alert("Marca al menos un sistema recomendador.", color="info")
 
-    sliders = []
-    if "hibrido" in selected_algos:
-        for algo in selected_algos:
-            label = {
-                "demografico":  "Peso demográfico",
-                "colaborativo": "Peso colaborativo",
-                "contenido":    "Peso de contenido",
-                "grupos": "Peso grupos",
-            }[algo]
+    # Only show sliders if "hibrido" is selected
+    if "hibrido" not in selected_algos:
+        return html.Div()  # Return empty container
 
-        sliders.append(
-            dbc.Row(
-                [
-                    dbc.Col(label, width=6),
-                    dbc.Col(
-                        dcc.Slider(
-                            id={"type": "weight-slider", "index": algo},
-                            min=0,
-                            max=100,
-                            step=1,
-                            value=33,                  
-                            marks={33:"1/3",66:"2/3",100:"1"},
-                            tooltip={"placement":"bottom","always_visible":False},
+    # Define which algorithms should have sliders
+    weighted_algos = ["demografico", "contenido", "colaborativo"]
+    algo_labels = {
+        "demografico": "Peso demográfico",
+        "contenido": "Peso de contenido",
+        "colaborativo": "Peso colaborativo"
+    }
+
+    sliders = []
+    for algo in selected_algos:
+        if algo in weighted_algos:
+            sliders.append(
+                dbc.Row(
+                    [
+                        dbc.Col(algo_labels[algo], width=6),
+                        dbc.Col(
+                            dcc.Slider(
+                                id={"type": "weight-slider", "index": algo},
+                                min=0,
+                                max=1,
+                                step=0.1,
+                                value=0.33,
+                                marks={0.33: "1/3", 0.66: "2/3", 1: "1"},
+                                tooltip={"placement": "bottom", "always_visible": False},
+                            ),
+                            width=6,
                         ),
-                        width=6,
-                    ),
-                ],
-                className="mb-3"
+                    ],
+                    className="mb-3"
+                )
             )
-        )
+
     return sliders
 
 
