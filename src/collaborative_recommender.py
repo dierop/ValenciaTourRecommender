@@ -20,7 +20,17 @@ class CollaborativeRecommender(BaseRecommender):
 
         user_neighbours = neighbours[neighbours['user_id'] == user_id]
 
-        return list(zip(user_neighbours['vecinos'][0], user_neighbours['pearson'][0]))
+        if user_neighbours.empty:
+        # el usuario no tiene vecinos calculados ⇒ decide qué hacer
+            return []
+
+        # 1) reinicia el índice y 2) usa .iloc para posición
+        user_neighbours = user_neighbours.reset_index(drop=True)
+
+        vecinos  = user_neighbours["vecinos"].iloc[0]
+        pearsons = user_neighbours["pearson"].iloc[0]
+
+        return list(zip(vecinos, pearsons))
 
 
     def get_relevant_items(self, preferences, items_visitados):
