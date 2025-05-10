@@ -256,4 +256,4 @@ def open_browser():
 # Run the Dash app in a separate thread
 if __name__ == '__main__':
     threading.Timer(1, open_browser).start()  # Open the app in the browser
-    app.run_server(debug=True, port=8050)
+    app.run_server(debug=False, port=8050)
