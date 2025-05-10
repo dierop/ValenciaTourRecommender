@@ -226,24 +226,21 @@ def save_detail_prefs(n_clicks, scores, id_objects, user):
     State("n-rec-input", "value"),
     State("algo-checklist", "value"),
     State({"type": "weight-slider", "index": ALL}, "value"),
-    State({"type": "weight-slider", "index": ALL}, "id"),
     prevent_initial_call=True,
 )
-def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
+def persist_rec_settings(n_clicks, n_items, algos, weights):
     if not n_clicks:
         raise PreventUpdate
     if n_items is None or n_items <= 0:
         return dash.no_update, dbc.Alert("Introduce un número de recomendaciones válido.", color="danger"), dash.no_update
 
     # Weights to 0 if not selected and mantain order for "hibrido"
-    raw_weight_map = {id_["index"]: w for w, id_ in zip(weights, slider_ids)}
-    ordered_algos = ["demografico", "contenido", "colaborativo"]
-    weight_map = {algo: raw_weight_map.get(algo, 0) for algo in ordered_algos}
+    dic_weights = {id: w for w, id in zip(weights, ["demografico", "contenido", "colaborativo"])}
 
     data = {
         "n_items": n_items,
         "algorithms": algos,
-        "weights": weight_map,
+        "weights": dic_weights,
     }
 
     return (

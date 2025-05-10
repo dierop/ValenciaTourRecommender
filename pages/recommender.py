@@ -50,7 +50,6 @@ layout = html.Div(                          # ① page wrapper
                         {"label": "Demográfico",            "value": "demografico"},
                         {"label": "Basado en contenido",    "value": "contenido"},
                         {"label": "Colaborativo (vecinos)", "value": "colaborativo"},
-                        {"label": "Grupos",    "value": "grupos"},
                         {"label": "Híbrido",    "value": "hibrido"},
                     ],
                     value=[],
@@ -85,7 +84,7 @@ def build_sliders(selected_algos):
 
     # Only show sliders if "hibrido" is selected
     if "hibrido" not in selected_algos:
-        return html.Div()  # Return empty container
+        return html.Div()
 
     # Define which algorithms should have sliders
     weighted_algos = ["demografico", "contenido", "colaborativo"]
@@ -96,28 +95,27 @@ def build_sliders(selected_algos):
     }
 
     sliders = []
-    for algo in selected_algos:
-        if algo in weighted_algos:
-            sliders.append(
-                dbc.Row(
-                    [
-                        dbc.Col(algo_labels[algo], width=6),
-                        dbc.Col(
-                            dcc.Slider(
-                                id={"type": "weight-slider", "index": algo},
-                                min=0,
-                                max=1,
-                                step=0.1,
-                                value=0.33,
-                                marks={0.33: "1/3", 0.66: "2/3", 1: "1"},
-                                tooltip={"placement": "bottom", "always_visible": False},
-                            ),
-                            width=6,
+    for algo in weighted_algos:
+        sliders.append(
+            dbc.Row(
+                [
+                    dbc.Col(algo_labels[algo], width=6),
+                    dbc.Col(
+                        dcc.Slider(
+                            id={"type": "weight-slider", "index": algo},
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=0,
+                            marks={0.33333: "1/3", 0.66: "2/3", 1: "1"},
+                            tooltip={"placement": "bottom", "always_visible": False},
                         ),
-                    ],
-                    className="mb-3"
-                )
+                        width=6,
+                    ),
+                ],
+                className="mb-3"
             )
+        )
 
     return sliders
 

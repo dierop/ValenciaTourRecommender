@@ -1,14 +1,20 @@
 # pages/results.py -------------------------------------------------------------
 from dash import html, dcc, callback, Input, Output, State, register_page
 import dash
+import sys
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
+import importlib
+from src.utils_google import get_place_details   
 
-from src.demographic_recommender import DemographicRecommender
-from src.content_recommender     import ContentRecommender
-from src.collaborative_recommender import CollaborativeRecommender  
-from src.hybrid_recommender import HybridRecommender
-from src.utils_google import get_place_details                      
+RECOMMENDER_MODS = [
+    "src.demographic_recommender",
+    "src.content_recommender",
+    "src.collaborative_recommender",
+    "src.hybrid_recommender",
+]
+
+                  
 
 register_page(__name__, path="/results", name="Resultados")
 
@@ -45,6 +51,15 @@ layout = html.Div(                     # ① page wrapper
 )
 
 def build_results(_pathname, user_id, rec_settings):
+    # Force Python to re-execute those modules to find new users 
+    for m in RECOMMENDER_MODS:
+        if m in sys.modules:
+            importlib.reload(sys.modules[m])
+    from src.demographic_recommender import DemographicRecommender
+    from src.content_recommender     import ContentRecommender
+    from src.collaborative_recommender import CollaborativeRecommender
+    from src.hybrid_recommender import HybridRecommender
+
     if user_id is None or rec_settings is None:
         return dbc.Alert("Faltan datos de usuario o configuración.", color="danger")
 
@@ -91,29 +106,28 @@ def build_results(_pathname, user_id, rec_settings):
                     _render_place_line(pid, pname, score)
                 )
 
-    if not children:
-        children.append(
-            dbc.Alert("No se generaron recomendaciones.", color="warning")
-        )
-
-    return children
-
-# --- HIBRIDO ----------------------------------------------
+    # --- HIBRIDO ----------------------------------------------
     if "hibrido" in algos:
+        if ["demografico", "contenido", "colaborativo"] not in algos:
+            cl  = CollaborativeRecommender()
+            cr  = ContentRecommender()
+            dr  = DemographicRecommender()
         hr  = HybridRecommender(dr = dr, cor = cl, cr = cr)
-        print('Hibrido',hr.recommend(
+        rec = hr.recommend(
             user_id=user_id,
-            n=n, checks = [w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']]))
+            n=n, checks = [w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']])
+        algos_weights_non_zero = [algo for algo, weight in w_dict.items() if weight > 0]
         if rec:
-            children.append(html.H4("Recomendaciones basadas en algoritmo Híbrido"))
+            children.append(html.H4("Recomendaciones basadas en algoritmo híbrido combinando modelos: " + ", ".join(algos_weights_non_zero)))
 
             for pid, pname, score, _ in rec:
                 children.extend(
                     _render_place_line(pid, pname, score)
                 )
+
     if not children:
         children.append(
-            dbc.Alert("No se generaron recomendaciones.", color="warning")
+            dbc.Alert("No se generaron recomendaciones. {w_dict}", color="warning")
         )
 
     return children
@@ -124,8 +138,8 @@ def build_results(_pathname, user_id, rec_settings):
 
 def _render_place_line(pid: str, pname: str, score: float):
     line = [html.Div(
-            html.Strong(f"{pname}"),  # Bold text
-            f" ({pid}) con certeza {round(score, 1)}",  # Regular text
+            [html.Strong(f"{pname}"),  # Bold text
+            f" ({pid}) con certeza {round(score, 1)}"],  # Regular text
             className="place-block")]
 
     gmaps = get_place_details(pname)
