@@ -5,4 +5,11 @@
 # Linux identifier
 api-key-maps.txt
 api-key.txt
-
+__pycache__*
+__pycache__/
+vscode/
+vscode_ws/
+*.pyc
+test.ipynb
+src/__pycache__/data_loader.cpython-310.pyc
+src/__pycache__/preprocess.cpython-310.pyc
