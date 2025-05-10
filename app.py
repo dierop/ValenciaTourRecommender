@@ -252,8 +252,6 @@ def persist_rec_settings(n_clicks, n_items, algos, weights, slider_ids):
         "/results"
     )
 
-
-
 # Function to open browser automatically
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:8050/")

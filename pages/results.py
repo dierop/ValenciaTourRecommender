@@ -12,9 +12,6 @@ from src.utils_google import get_place_details
 
 register_page(__name__, path="/results", name="Resultados")
 
-from src.data_loader import Data
-user_info = Data().datos_personales
-
 # ------------------------------------------------------------------------------
 # Layout
 
