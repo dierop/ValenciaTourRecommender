@@ -7,13 +7,10 @@ from dash.exceptions import PreventUpdate
 from src.demographic_recommender import DemographicRecommender
 from src.content_recommender     import ContentRecommender
 from src.collaborative_recommender import CollaborativeRecommender  
-from src.hybrid_recommender import HybridRecommender  
+from src.hybrid_recommender import HybridRecommender
 from src.utils_google import get_place_details                      
 
 register_page(__name__, path="/results", name="Resultados")
-
-# ------------------------------------------------------------------------------
-# Layout
 
 # ------------------------------------------------------------------------------
 # Layout
@@ -103,16 +100,17 @@ def build_results(_pathname, user_id, rec_settings):
 
 # --- HIBRIDO ----------------------------------------------
     if "hibrido" in algos:
-        cl  = CollaborativeRecommender()
-        rec = cl.recommend(user_id=user_id, n=n)
+        hr  = HybridRecommender(dr = dr, cor = cl, cr = cr)
+        print('Hibrido',hr.recommend(
+            user_id=user_id,
+            n=n, checks = [w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']]))
         if rec:
-            children.append(html.H4("Recomendaciones basadas en algoritmo colaborativo"))
+            children.append(html.H4("Recomendaciones basadas en algoritmo Híbrido"))
 
             for pid, pname, score, _ in rec:
                 children.extend(
                     _render_place_line(pid, pname, score)
                 )
-
     if not children:
         children.append(
             dbc.Alert("No se generaron recomendaciones.", color="warning")
