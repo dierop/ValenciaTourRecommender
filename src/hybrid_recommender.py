@@ -1,5 +1,6 @@
 from src.content_recommender import ContentRecommender
 from src.demographic_recommender import DemographicRecommender
+from src.collaborative_recommender import CollaborativeRecommender
 from src.base_recommender import BaseRecommender
 from src.data_loader import Data
 import pandas as pd
@@ -7,22 +8,22 @@ import numpy as np
 
 class HybridRecommender():
 
-    def __init__(self, data: Data = Data(), cr: ContentRecommender = None, dr: DemographicRecommender = None, cor: BaseRecommender = None):
+    def __init__(self, data: Data = Data(), cr: ContentRecommender = None, dr: DemographicRecommender = None, cor: CollaborativeRecommender = None):
         self.cr = cr if cr is not None else ContentRecommender(data)
         self.dr = dr if dr is not None else DemographicRecommender(data)
-        self.cor = cor
+        self.cor = cor if cor is not None else CollaborativeRecommender(data)
         self.data = data
-        self.weights = [0.3, 0.3, 0.4]  # [demográfica, contenido, colaborativa] pesos iniciales
+        # self.weights = [0.3, 0.3, 0.4]  # [demográfica, contenido, colaborativa] pesos iniciales
 
-    def update_weights(self, user_id, weights, checks=[1, 1, 1]):
-        pesos_ajustados = weights.copy()
+    def update_weights(self, user_id, checks=[1, 1, 1]):
+        pesos_ajustados = checks
 
         # Validar disponibilidad de datos
         if self.data.datos_personales[self.data.datos_personales["user"] == user_id].empty or not checks[0]:
             pesos_ajustados[0] = 0
         if user_id not in self.data.user_mapping or not checks[1]:
             pesos_ajustados[1] = 0
-        if self.cor is None or not checks[2]: #cambiar cuando se tenga colaborativa
+        if self.data.users[self.data.users["user"] == user_id].empty or not checks[2]:
             pesos_ajustados[2] = 0
 
         suma = sum(pesos_ajustados)
@@ -62,7 +63,7 @@ class HybridRecommender():
         colaborativas = self.cor.recommend(user_id, n) if checks[2] and self.cor is not None else None
 
         # 2. Actualizar pesos
-        pesos = self.update_weights(user_id, self.weights, checks)
+        pesos = self.update_weights(user_id, checks)
 
         # 3. Combinar recomendaciones
         scores = self.compute_scores([demograficas, contenido, colaborativas], pesos)
