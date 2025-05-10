@@ -139,7 +139,7 @@ def build_results(_pathname, user_id, rec_settings):
 def _render_place_line(pid: str, pname: str, score: float):
     line = [html.Div(
             [html.Strong(f"{pname}"),  # Bold text
-            f" ({pid}) con certeza {round(score, 1)}"],  # Regular text
+            f" con score {round(score, 2)}"],  # Regular text
             className="place-block")]
 
     gmaps = get_place_details(pname)
