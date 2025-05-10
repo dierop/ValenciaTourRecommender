@@ -24,14 +24,14 @@ layout = html.Div(                          # ① page wrapper
         dbc.Card(                           # ② translucent card
             className="recommender-card",
             children=[
-                html.H2("Centro de recomendaciones", className="mb-4"),
+                html.H2("Centro de recomendaciones para grupos", className="mb-4"),
 
                 dbc.Row(
                     [
                         dbc.Col("Seleccione cuántas recomendaciones desea obtener:", width=8),
                         dbc.Col(
                             dcc.Input(
-                                id="n-rec-input",
+                                id="n-rec-input-groups",
                                 type="number",
                                 min=1, max=10, step=1,
                                 placeholder="Hasta 10",
@@ -45,7 +45,7 @@ layout = html.Div(                          # ① page wrapper
 
                 html.H5("Seleccione qué sistema(s) desea usar o si los quiere combinar en uno híbrido con que pesos:"),
                 dcc.Checklist(
-                    id="algo-checklist",
+                    id="algo-checklist-groups",
                     options=[
                         {"label": "Demográfico",            "value": "demografico"},
                         {"label": "Basado en contenido",    "value": "contenido"},
@@ -57,15 +57,15 @@ layout = html.Div(                          # ① page wrapper
                     className="mb-3",
                 ),
 
-                html.Div(id="weight-slider-container"),
+                html.Div(id="weight-slider-container-groups"),
 
                 dbc.Button(
                     "Obtener recomendaciones",
-                    id="get-recs-btn",
-                    color="primary",              # required arg
-                    className="btn-teal mt-2",    # teal override
+                    id="get-recs-btn-groups",
+                    color="primary",              
+                    className="btn-teal mt-2",    
                 ),
-                html.Div(id="recs-confirmation", className="mt-3"),
+                html.Div(id="recs-confirmation-groups", className="mt-3"),
             ],
         )
     ]
@@ -76,7 +76,7 @@ layout = html.Div(                          # ① page wrapper
 
 @callback(
     Output("weight-slider-container", "children"),
-    Input("algo-checklist", "value"),
+    Input("algo-checklist-groups", "value"),
 )
 def build_sliders(selected_algos):
     if not selected_algos:

@@ -26,6 +26,7 @@ ocupacion_options = [
     {"label": "Inactivo o desocupado", "value": "11"}
 ]
 
+# Login form individual
 login_form = dbc.Card(
     dbc.CardBody(
         [
@@ -43,37 +44,73 @@ login_form = dbc.Card(
     className="login-card"
 )
 
+# Login form individual
+group_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("¿Viajas en grupo y quieres obtener una recomendación para todos?", 
+                    className="mb-3"),
+            dbc.Button(
+                "Recomendar en conjunto",
+                id="grops_button",   
+                color="primary",                      
+                style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"},
+                className="w-100"
+            ),
+        ]
+    ),
+    className="login-card",
+    style={
+        "marginTop": "30px",          # separa ambas tarjetas
+        "backgroundColor": "#f8f9fa",
+        "padding": "20px",
+        "borderRadius": "10px"
+    },
+)
+
 # App Layout
+# ---------------------------------------------------------------------------
 layout = dbc.Container(
     [
         dbc.Row(
             dbc.Col(
-                html.H1("Hola, bienvenidos a tu guía turística de Valencia!", 
-                        className="text-center text-white my-4", 
-                        style={"background-color": "#36a68a", "padding": "10px", "border-radius": "10px"}),
+                html.H1(
+                    "Hola, ¡bienvenid@ a tu guía turística de Valencia!",
+                    className="text-center text-white my-4",
+                    style={
+                        "background-color": "#36a68a",
+                        "padding": "10px",
+                        "border-radius": "10px"
+                    }
+                ),
                 width=12
             )
         ),
-        
+
+        # Tarjeta Login
         dbc.Row(
-            dbc.Col(
-                [
-                    login_form,
-                ],
-                width=6, className="offset-md-3 text-center"
-            )
+            dbc.Col(login_form, width=6, className="offset-md-3 text-center")
+        ),
+
+        # Tarjeta Recomendación en grupo  ▼▼
+        dbc.Row(
+            dbc.Col(group_card, width=6, className="offset-md-3 text-center")
         ),
 
         html.Div(id="signup_form", style={"marginTop": "30px"}),
-        html.Div(id="confirmation_message", className="mt-3"), #Confirmación de registro    
-        html.Div(id="user_found_message", className="mt-3")  #Confirmación de login
+        html.Div(id="confirmation_message", className="mt-3"),
+        html.Div(id="user_found_message",   className="mt-3"),
     ],
     fluid=True,
     style={
-        'backgroundColor': '#E0F8E0', 'position': 'fixed',
-        'top': 0,        'left': 0,        'bottom': 0,        'right': 0,
-        'overflow': 'auto'  # Allows scrolling if content exceeds viewport
-    }, 
+        "backgroundColor": "#E0F8E0",
+        "position": "fixed",
+        "top": 0,
+        "left": 0,
+        "bottom": 0,
+        "right": 0,
+        "overflow": "auto",
+    },
 )
 
 # ------------------------------------------------------------------- 
