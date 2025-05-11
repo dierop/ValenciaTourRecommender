@@ -29,9 +29,13 @@ def get_all_preferences(df_preferences, df_users):
             father = df_preferences[df_preferences['preference'] == pref]['father'].values[0]
             if father == 0:
                 all_preferences[i, pref] = score
+                children = df_preferences[df_preferences['father'] == pref]['preference'].values
+                for child in children:
+                    if all_preferences[i, child] == 0:
+                        all_preferences[i, child] = score
             else:
-                father_score = all_preferences[i, father]
-                all_preferences[i, pref] = (father_score + score) / 2 if father_score > 0 else score
+                # father_score = all_preferences[i, father]   (father_score + score) / 2 if father_score > 0 else score
+                all_preferences[i, pref] = score
 
     return all_preferences, user_map
 
