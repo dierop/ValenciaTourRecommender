@@ -4,6 +4,7 @@ from dash import dcc, html, callback, Input, Output, State, register_page
 import dash_bootstrap_components as dbc
 import dash
 
+
 # Register the page first
 register_page(
     __name__,
