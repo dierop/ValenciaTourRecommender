@@ -149,11 +149,24 @@ def go_to_recs_after_login(n_clicks, user):
         raise PreventUpdate
     try:
         uid = int(user)
+def go_to_recs_after_login(n_clicks, user):
+    if not n_clicks:
+        raise PreventUpdate
+    try:
+        uid = int(user)
     except (ValueError, TypeError):
-        return dash.no_update                      
+        return (
+            dbc.Alert("❌ Número de usuario no válido, introduzca un ID válido o regístrese.", color="danger"),
+            dash.no_update,          # no tocar el Store "user"
+            dash.no_update           # no redirigir
+        )
 
     if uid not in db_users["user"].values:
-        return dash.no_update
+        return (
+            dbc.Alert("❌ Usuario no encontrado, introduzca un ID válido o regístrese.", color="danger"),
+            dash.no_update,
+            dash.no_update
+        )
 
     return (
         dbc.Alert(f"✅ Usuario {uid} encontrado en la base de datos",  color="success"),
