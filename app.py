@@ -149,11 +149,6 @@ def go_to_recs_after_login(n_clicks, user):
         raise PreventUpdate
     try:
         uid = int(user)
-def go_to_recs_after_login(n_clicks, user):
-    if not n_clicks:
-        raise PreventUpdate
-    try:
-        uid = int(user)
     except (ValueError, TypeError):
         return (
             dbc.Alert("❌ Número de usuario no válido, introduzca un ID válido o regístrese.", color="danger"),
