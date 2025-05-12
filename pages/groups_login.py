@@ -3,7 +3,7 @@
 from dash import dcc, html, callback, Input, Output, State, register_page
 import dash_bootstrap_components as dbc
 import dash
-
+from src.data_loader import Data
 
 # Register the page first
 register_page(
@@ -11,8 +11,8 @@ register_page(
     path="/groups_login",
     title="Recomendación grupal"
 )
-
-USER_OPTIONS = [{"label": str(i), "value": str(i)} for i in range(123, 181)]
+user_info = Data().datos_personales
+USER_OPTIONS = [{"label": str(i), "value": str(i)} for i in list(user_info["user"].values)]
 MAX_INDIVIDUOS = 10
 
 def _build_user_dropdown(idx: int) -> dbc.Row:
