@@ -1,4 +1,5 @@
-# pages/results.py -------------------------------------------------------------
+# pages/groups_results.py 
+# -------------------------------------------------------------
 from dash import html, dcc, callback, Input, Output, State, register_page
 import dash
 import sys
@@ -57,17 +58,25 @@ def build_results(_pathname, group_ids, rec_groups_settings):
 
     n      = rec_groups_settings.get("n_items", 10)
     algos  = rec_groups_settings.get("algorithms", [])
+    labels = ["demografico", "contenido", "colaborativo", "hibrido"]
+    algoritmos_recommender  = [label in algos for label in labels]
     w_dict = rec_groups_settings.get("weights", {})
+    # --- GRUPOS -----------------------------------------------------------
+    if not w_dict:   # Si no se activaron los sliders porque no seleccionó el híbrido
+        gr=GroupRecommender()
+        rec = gr.group_recommend(
+            users_id=group_ids,
+            types=algoritmos_recommender,
+            n=n)
+    else:
+        gr=GroupRecommender()
+        rec = gr.group_recommend(
+            users_id=group_ids,
+            types=algos,
+            checks=[w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']],
+            n=n)
 
     children = []
-
-    # --- GRUPOS -----------------------------------------------------------
-    gr=GroupRecommender()
-    rec = gr.group_recommend(
-        users_id=group_ids,
-        types=algos,
-        checks=[w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']],
-        n=n)
 
     if rec:
         children.append(html.H4("Recomendaciones para grupo: usando los algoritmos " + ", ".join(algos)))

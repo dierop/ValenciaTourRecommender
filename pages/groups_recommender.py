@@ -1,4 +1,5 @@
-# pages/recommender.py 
+# pages/groups_recommender.py 
+# ---------------------------------------------------------------------------
 from dash import html, dcc, callback, Input, Output, State, ALL, register_page
 import dash
 import dash_bootstrap_components as dbc

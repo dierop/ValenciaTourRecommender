@@ -13,6 +13,7 @@ app = Dash(__name__,
            external_stylesheets=[dbc.themes.BOOTSTRAP], 
            suppress_callback_exceptions=True,
            use_pages=True)
+server = app.server
 
 # Load data
 user_info = Data().datos_personales
@@ -149,10 +150,18 @@ def go_to_recs_after_login(n_clicks, user):
     try:
         uid = int(user)
     except (ValueError, TypeError):
-        return dash.no_update                      
+        return (
+            dbc.Alert("❌ Número de usuario no válido, introduzca un ID válido o regístrese.", color="danger"),
+            dash.no_update,          # no tocar el Store "user"
+            dash.no_update           # no redirigir
+        )
 
     if uid not in db_users["user"].values:
-        return dash.no_update
+        return (
+            dbc.Alert("❌ Usuario no encontrado, introduzca un ID válido o regístrese.", color="danger"),
+            dash.no_update,
+            dash.no_update
+        )
 
     return (
         dbc.Alert(f"✅ Usuario {uid} encontrado en la base de datos",  color="success"),
@@ -330,10 +339,10 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
 
 ############################ Launch app ############################
 #  Function to open browser automatically
-def open_browser():
-    webbrowser.open_new("http://127.0.0.1:8050/")
+#def open_browser():
+#    webbrowser.open_new("http://127.0.0.1:8050/")
 
 # Run the Dash app in a separate thread
 if __name__ == '__main__':
-    threading.Timer(1, open_browser).start()  
-    app.run_server(debug=True, port=8050)
+    #threading.Timer(1, open_browser).start()  
+    app.run_server(debug=True, host="0.0.0.0", port=8050) 
