@@ -23,8 +23,8 @@ def create_preference_card(pref):
                              style={"fontSize":".85rem"}),
                     dcc.Slider(
                         id={"type": "pref-slider", "index": pref["id"]},
-                        min=0, max=100, step=5, value=0,
-                        marks={0:"0", 50:"50", 100:"100"},
+                        min=0, max=10, step=1, value=0,
+                        marks={0:"0", 5:"5", 10:"10"},
                         tooltip={"placement":"bottom","always_visible":True},
                     ),
                 ],
@@ -57,7 +57,7 @@ preference_categories = [
 # Layout
 layout = dbc.Container([
     html.H2("Ahora cuentanos acerca de tus preferencias de turismo:", className="my-4"),
-    html.P("Asigna un valor del 0 al 100 a cada categoría según tu interés (mínimo 3)", className="mb-4"),
+    html.P("Asigna un valor del 0 al 10 a cada categoría según tu interés (mínimo 3)", className="mb-4"),
     
     # Grid container with fixed width
     html.Div(

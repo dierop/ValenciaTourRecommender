@@ -94,7 +94,7 @@ def build_subpref_inputs(selected_cat_ids):
                         dbc.Col(
                             dcc.Input(
                                 id={"type": "subpref-score", "index": str(row["preference"])},
-                                type="number", min=0, max=100, step=5, value=0,
+                                type="number", min=0, max=10, step=1, value=0,
                                 className="form-control",
                             ),
                             width=3,
