@@ -1,8 +1,9 @@
 dash==2.18.2
-dash_bootstrap_components==2.0.2
-numpy==2.2.5
+dash_bootstrap_components==1.7.1
+dash-core-components==2.0.0
+dash-html-components==2.0.0
+dash-table==5.0.0
+numpy==2.2.2
 pandas==2.2.3
-requests
-abc
-collections
-typing
+requests==2.32.3
+importlib_metadata==8.6.1
