@@ -13,6 +13,7 @@ app = Dash(__name__,
            external_stylesheets=[dbc.themes.BOOTSTRAP], 
            suppress_callback_exceptions=True,
            use_pages=True)
+server = app.server
 
 # Load data
 user_info = Data().datos_personales
@@ -328,12 +329,12 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
 
 
 
-############################ Launch app ############################
+############################ Launch app in Render server ############################
 #  Function to open browser automatically
-def open_browser():
-    webbrowser.open_new("http://127.0.0.1:8050/")
+#def open_browser():
+#    webbrowser.open_new("http://127.0.0.1:8050/")
 
 # Run the Dash app in a separate thread
 if __name__ == '__main__':
-    threading.Timer(1, open_browser).start()  
-    app.run_server(debug=True, port=8050)
+    #threading.Timer(1, open_browser).start()  
+    app.run_server(debug=False) #, port=8050
