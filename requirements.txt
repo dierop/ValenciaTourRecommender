@@ -1,0 +1,8 @@
+dash==2.18.2
+dash_bootstrap_components==2.0.2
+numpy==2.2.5
+pandas==2.2.3
+requests
+abc
+collections
+typing
