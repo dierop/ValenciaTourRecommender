@@ -13,8 +13,7 @@ Sistema de recomendación para ayudarte a elegir las mejores atracciones turíst
 ![Selección de algoritmo](assets/screenshot_selectalgorithms.png)
 
 ### Resultados de recomendaciones
-
-![Resultados de recomendaciones](assets/screenshot_resultados.png)
+![Resultados de recomendaciones](assets/screenshot_resultados2.png)
 
 ## ⚙️ Instalación y puesta en marcha
 
