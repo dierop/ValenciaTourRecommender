@@ -149,6 +149,11 @@ def go_to_recs_after_login(n_clicks, user):
         raise PreventUpdate
     try:
         uid = int(user)
+def go_to_recs_after_login(n_clicks, user):
+    if not n_clicks:
+        raise PreventUpdate
+    try:
+        uid = int(user)
     except (ValueError, TypeError):
         return (
             dbc.Alert("❌ Número de usuario no válido, introduzca un ID válido o regístrese.", color="danger"),
@@ -337,7 +342,7 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
 
 
 
-############################ Launch app ############################
+############################ Launch app in Render server ############################
 #  Function to open browser automatically
 #def open_browser():
 #    webbrowser.open_new("http://127.0.0.1:8050/")
@@ -345,4 +350,5 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
 # Run the Dash app in a separate thread
 if __name__ == '__main__':
     #threading.Timer(1, open_browser).start()  
-    app.run_server(debug=True, host="0.0.0.0", port=8050) 
+    app.run_server(debug=False, host="0.0.0.0", port=8050) 
+
