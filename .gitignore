@@ -2,6 +2,9 @@
 .cache
 # Linux identifier
 *Zone.Identifier
+# Linux identifier
+api-key-maps.txt
+api-key.txt
 __pycache__*
 __pycache__/
 vscode/

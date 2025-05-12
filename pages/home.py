@@ -1,11 +1,15 @@
-from dash import Dash, dcc, html, Output, Input, State, register_page, callback
+from dash import dcc, html, Output, Input, register_page, callback, State
 import dash_bootstrap_components as dbc
-import pandas as pd
-import threading
-import webbrowser
+import dash
+from dash.exceptions import PreventUpdate
+from src.data_loader import Data
 
 # Register this page
-register_page(__name__, path="/home")
+register_page(
+    __name__,
+    path='/', 
+    title='Inicio'
+)
 
 # Options for "Ocupación"
 ocupacion_options = [
@@ -22,42 +26,103 @@ ocupacion_options = [
     {"label": "Inactivo o desocupado", "value": "11"}
 ]
 
+# Login form individual
+login_form = dbc.Card(
+    dbc.CardBody(
+        [
+            dcc.Input(
+                id="register_user",
+                type="text",
+                placeholder="Introduce tu ID de usuario",
+                className="form-control mb-3",
+            ),
+            dbc.Button("Login",   id="login_button", color="primary",                      
+                        style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"}, className="me-2",),
+            dbc.Button("Sign Up", id="signup_button", color="secondary"),
+        ]
+    ),
+    className="login-card"
+)
+
+# Login form individual
+group_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("¿Viajas en grupo y quieres obtener una recomendación para todos?", 
+                    className="mb-3"),
+            dbc.Button(
+                "Recomendar en conjunto",
+                id="grops_button",   
+                color="primary",                      
+                style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"},
+                className="w-100"
+            ),
+        ]
+    ),
+    className="login-card",
+    style={
+        "marginTop": "30px",          # separa ambas tarjetas
+        "backgroundColor": "#f8f9fa",
+        "padding": "20px",
+        "borderRadius": "10px"
+    },
+)
+
 # App Layout
+# ---------------------------------------------------------------------------
 layout = dbc.Container(
     [
         dbc.Row(
             dbc.Col(
-                html.H1("Hola, bienvenidos a tu guía turística de Valencia!", 
-                        className="text-center text-white my-4", 
-                        style={"background-color": "#4CAF50", "padding": "10px", "border-radius": "10px"}),
+                html.H1(
+                    "Hola, ¡bienvenid@ a tu guía turística de Valencia!",
+                    className="text-center text-white my-4",
+                    style={
+                        "background-color": "#36a68a",
+                        "padding": "10px",
+                        "border-radius": "10px"
+                    }
+                ),
                 width=12
             )
         ),
-        
+
+        # Tarjeta Login
         dbc.Row(
-            dbc.Col(
-                [
-                    dbc.Input(id="user_id", type="text", placeholder="Introduce tu ID de usuario", className="mb-2"),
-                    dbc.Button("Login", id="login_button", color="primary", className="me-2"),
-                    dbc.Button("Sign Up", id="signup_button", color="success")
-                ],
-                width=6, className="offset-md-3 text-center"
-            )
+            dbc.Col(login_form, width=6, className="offset-md-3 text-center")
+        ),
+
+        # Tarjeta Recomendación en grupo  ▼▼
+        dbc.Row(
+            dbc.Col(group_card, width=6, className="offset-md-3 text-center")
         ),
 
         html.Div(id="signup_form", style={"marginTop": "30px"}),
-        html.Div(id="confirmation_message")  # Added this to display confirmation messages
+        html.Div(id="confirmation_message", className="mt-3"),
+        html.Div(id="user_found_message",   className="mt-3"),
     ],
     fluid=True,
-    style={"backgroundColor": "#E0F8E0", "height": "100vh"}  
+    style={
+        "backgroundColor": "#E0F8E0",
+        "position": "fixed",
+        "top": 0,
+        "left": 0,
+        "bottom": 0,
+        "right": 0,
+        "overflow": "auto",
+    },
 )
 
-# Callback to display the signup form
+# ------------------------------------------------------------------- 
+# Callbacks
+
+# 1) Signup form
 @callback(
     Output("signup_form", "children"),
     Input("signup_button", "n_clicks"),
     prevent_initial_call=True
 )
+
 def display_signup_form(n_clicks):
     return dbc.Card(
         dbc.CardBody([
@@ -108,25 +173,43 @@ def display_signup_form(n_clicks):
                 )
             ], className="mb-3"),
 
-            # Edad hijos (conditionally displayed)
-            html.Div(id="hijos_edades"),
+            # Edad hijos (conditional inputs)
+            html.Div(
+                [
+                    dbc.Input(id="edad_hijo_menor", type="number",
+                              placeholder="Edad hijo menor",
+                              className="mb-2", style={"display": "none"}),
+                    dbc.Input(id="edad_hijo_mayor", type="number",
+                              placeholder="Edad hijo mayor",
+                              className="mb-2", style={"display": "none"})
+                ],
+                id="hijos_edades"),
 
             # Submit Button
-            dbc.Button("Enviar", id="submit_button", color="primary", className="w-100 mt-4")
+            dbc.Button("Enviar", id="submit_button", color="primary",style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"}, className="w-100 mt-4")
         ]),
         style={"maxWidth": "800px", "margin": "auto", "marginTop": "20px", "backgroundColor": "#f8f9fa", "padding": "20px", "borderRadius": "10px"}
     )
 
 
-# Callback to show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"
+# 2) Show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"
 @callback(
-    Output("hijos_edades", "children"),
+    [
+        Output("hijos_edades", "children"),
+        Output("hijos_edades", "style")
+    ],
     Input("hijos", "value")
 )
 def toggle_hijos_fields(hijos):
-    if 1 in hijos:
-        return html.Div([
-            dbc.Input(id="edad_hijo_menor", type="number", placeholder="Edad hijo menor", className="mb-2"),
-            dbc.Input(id="edad_hijo_mayor", type="number", placeholder="Edad hijo mayor", className="mb-2")
-        ])
-    return None
+    if hijos and 1 in hijos:
+        return (
+            html.Div([
+                dbc.Input(id="edad_hijo_menor", type="number", placeholder="Edad hijo menor", className="mb-2"),
+                dbc.Input(id="edad_hijo_mayor", type="number", placeholder="Edad hijo mayor", className="mb-2")
+            ]),
+            {"display": "block"}
+        )
+    else:
+        return (None, {"display": "none"})
+    
+
