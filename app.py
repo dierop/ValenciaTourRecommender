@@ -350,4 +350,4 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
 # Run the Dash app in a separate thread
 if __name__ == '__main__':
     #threading.Timer(1, open_browser).start()  
-    app.run_server(debug=False) #, port=8050
+    app.run_server(debug=False, host="0.0.0.0", port=8050) 
