@@ -87,7 +87,7 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 html.H1(
-                    "Hola, ¡bienvenid@ a tu guía turística de Valencia!",
+                    "Hola, ¡bienvenido a tu guía turística de Valencia!",
                     className="text-center text-white my-4",
                     style={
                         "background-color": "#36a68a",
