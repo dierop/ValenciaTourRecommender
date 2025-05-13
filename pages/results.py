@@ -32,7 +32,7 @@ layout = html.Div(                     # ① page wrapper
                            color="secondary",
                            className="btn-teal mb-4"),   # teal override
 
-                html.H2("Resultados de la recomendación", className="mb-4"),
+                html.H2(id="results-title", className="mb-4"),
                 dcc.Loading(html.Div(id="results-container"), type="circle"),
             ],
         )
@@ -43,7 +43,8 @@ layout = html.Div(                     # ① page wrapper
 # Callback
 
 @callback(
-    Output("results-container", "children"),
+    [Output("results-container", "children"),     
+     Output("results-title",    "children")],
     Input("url", "pathname"),
     State("user", "data"),
     State("rec_settings", "data"),          # viene del Store de /recommender
@@ -75,7 +76,7 @@ def build_results(_pathname, user_id, rec_settings):
         rec = dr.recommend(user_id=user_id, n=n)   # [(id, name, score, group), ...]
         if rec:
             demographic_group = rec[0][3]
-            children.append(html.H4(f"Recomendaciones demográficas (grupo {demographic_group})"))
+            children.append(html.H4(f"Recomendaciones demográficas usuario (grupo {demographic_group})"))
 
             for pid, pname, score, _ in rec:
                 children.extend(
@@ -130,7 +131,9 @@ def build_results(_pathname, user_id, rec_settings):
             dbc.Alert("No se generaron recomendaciones. {w_dict}", color="warning")
         )
 
-    return children
+    title = f"Resultados de la recomendación para el usuario {user_id}"
+
+    return children, title
 
 
 # ------------------------------------------------------------------------------
