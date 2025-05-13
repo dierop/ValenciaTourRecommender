@@ -8,6 +8,10 @@ import threading
 import webbrowser
 import json
 import datetime
+import importlib
+import sys
+
+refresh_modules = ["src.data_loader"]
 
 app = Dash(__name__, 
            external_stylesheets=[dbc.themes.BOOTSTRAP], 
@@ -145,6 +149,9 @@ db_users = Data().users
 )
 
 def go_to_recs_after_login(n_clicks, user):
+    for m in refresh_modules:
+        if m in sys.modules:
+            importlib.reload(sys.modules[m])
     if not n_clicks:
         raise PreventUpdate
     try:
@@ -324,7 +331,7 @@ def save_group_ids(n_clicks, selected_ids, cantidad_individuos):
             "/groups_recommender",   
         )
 
-############### recommender.py: Callback to save config recomendaciones (-> groups_results.py) ############### 
+############### group_recommender.py: Callback to save config recomendaciones (-> groups_results.py) ############### 
 @callback(
     [Output("rec_groups_settings", "data"),
      Output("recs-confirmation-groups", "children"),
@@ -335,7 +342,8 @@ def save_group_ids(n_clicks, selected_ids, cantidad_individuos):
     State({"type": "weight-slider", "index": ALL}, "value"),
     prevent_initial_call=True,
 )
-def persist_rec_settings(n_clicks, n_items, algos, weights):
+
+def persist_group_rec_settings(n_clicks, n_items, algos, weights):
     if not n_clicks:
         raise PreventUpdate
     if n_items is None or n_items <= 0:
