@@ -92,6 +92,9 @@ def hide_nav_on_detail(pathname):
 )
 
 def submit_user(n_clicks, edad, sexo, ocupacion, hijos, edad_hijo_menor, edad_hijo_mayor):
+    for m in refresh_modules:
+        if m in sys.modules:
+            importlib.reload(sys.modules[m])
     global user_info
 
     # Auto increment user_id
