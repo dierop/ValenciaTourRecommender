@@ -54,13 +54,13 @@ def build_results(_pathname, group_ids, rec_groups_settings):
     if 'src.group_recommender' in sys.modules:
         importlib.reload(sys.modules['src.group_recommender'])
     from src.group_recommender import GroupRecommender
-    
 
     n      = rec_groups_settings.get("n_items", 10)
     algos  = rec_groups_settings.get("algorithms", [])
     labels = ["demografico", "contenido", "colaborativo", "hibrido"]
     algoritmos_recommender  = [label in algos for label in labels]
     w_dict = rec_groups_settings.get("weights", {})
+
     # --- GRUPOS -----------------------------------------------------------
     if not w_dict:   # Si no se activaron los sliders porque no seleccionó el híbrido
         gr=GroupRecommender()
@@ -72,7 +72,7 @@ def build_results(_pathname, group_ids, rec_groups_settings):
         gr=GroupRecommender()
         rec = gr.group_recommend(
             users_id=group_ids,
-            types=algos,
+            types=algoritmos_recommender,
             checks=[w_dict['demografico'], w_dict['contenido'], w_dict['colaborativo']],
             n=n)
 

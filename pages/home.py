@@ -2,7 +2,10 @@ from dash import dcc, html, Output, Input, register_page, callback, State
 import dash_bootstrap_components as dbc
 import dash
 from dash.exceptions import PreventUpdate
+import importlib
 from src.data_loader import Data
+
+refresh_modules = ["src.data_loader"]
 
 # Register this page
 register_page(
@@ -41,10 +44,17 @@ login_form = dbc.Card(
             dbc.Button("Sign Up", id="signup_button", color="secondary"),
         ]
     ),
+    style={
+        "marginTop": "30px",          # separa ambas tarjetas
+        "backgroundColor": "#f8f9fa",
+        "padding": "20px",
+        "borderRadius": "10px",
+        "maxWidth": "800px"
+    },
     className="login-card"
 )
 
-# Login form individual
+# Login form groups
 group_card = dbc.Card(
     dbc.CardBody(
         [
@@ -64,8 +74,10 @@ group_card = dbc.Card(
         "marginTop": "30px",          # separa ambas tarjetas
         "backgroundColor": "#f8f9fa",
         "padding": "20px",
-        "borderRadius": "10px"
+        "borderRadius": "10px",
+        "maxWidth": "800px"
     },
+    id="group_card_container",
 )
 
 # App Layout
@@ -118,13 +130,14 @@ layout = dbc.Container(
 
 # 1) Signup form
 @callback(
-    Output("signup_form", "children"),
+    [Output("signup_form", "children"),
+     Output("group_card_container",  "style")], 
     Input("signup_button", "n_clicks"),
     prevent_initial_call=True
 )
 
 def display_signup_form(n_clicks):
-    return dbc.Card(
+    return (dbc.Card(
         dbc.CardBody([
             html.H4("Registro de Usuario", className="text-center"),
             
@@ -153,7 +166,8 @@ def display_signup_form(n_clicks):
                         id="ocupacion",
                         options=ocupacion_options,
                         placeholder="Selecciona tu ocupación",
-                        style={'width': '100%'}
+                        style={'width': '1000px', 'display': 'inline-block', 'margin-left': '10px', 
+                               'margin-right': '10px'},
                     ),
                     width=10
                 )
@@ -188,8 +202,8 @@ def display_signup_form(n_clicks):
             # Submit Button
             dbc.Button("Enviar", id="submit_button", color="primary",style={"background-color": "#5b93ad",  "border-color":     "#5b93ad"}, className="w-100 mt-4")
         ]),
-        style={"maxWidth": "800px", "margin": "auto", "marginTop": "20px", "backgroundColor": "#f8f9fa", "padding": "20px", "borderRadius": "10px"}
-    )
+        style={"maxWidth": "1300px", "margin": "auto", "marginTop": "20px", "backgroundColor": "#f8f9fa", "padding": "20px", "borderRadius": "10px"}
+    ), {"display": "none"})
 
 
 # 2) Show/hide edad_hijo_menor and edad_hijo_mayor based on "¿Tienes hijos?"

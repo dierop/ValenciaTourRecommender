@@ -8,6 +8,10 @@ import threading
 import webbrowser
 import json
 import datetime
+import importlib
+import sys
+
+refresh_modules = ["src.data_loader"]
 
 app = Dash(__name__, 
            external_stylesheets=[dbc.themes.BOOTSTRAP], 
@@ -145,6 +149,9 @@ db_users = Data().users
 )
 
 def go_to_recs_after_login(n_clicks, user):
+    for m in refresh_modules:
+        if m in sys.modules:
+            importlib.reload(sys.modules[m])
     if not n_clicks:
         raise PreventUpdate
     try:
@@ -287,25 +294,44 @@ def persist_rec_settings(n_clicks, n_items, algos, weights):
      Output("group_ids", "data"),
      Output("page_groups_recs_redirect", "pathname", allow_duplicate=True)],
     Input("grupo_continuar_btn", "n_clicks"),                    
-    State({"type": "user_id_dd", "index": ALL}, "value"),        
+    State({"type": "user_id_dd", "index": ALL}, "value"),  
+    State("cantidad_individuos", "value"),       
     prevent_initial_call=True,
 )
-def save_group_ids(n_clicks, selected_ids):
+def save_group_ids(n_clicks, selected_ids, cantidad_individuos):
     if not n_clicks:                    
         raise PreventUpdate
-
+    
     cleaned = [int(uid) for uid in selected_ids if uid is not None]
-    cleaned_text = [str(uid) for uid in selected_ids if uid is not None]
-    cleaned = list(dict.fromkeys(cleaned))
-    text = ", ".join(cleaned_text)         
+    cleaned = list(dict.fromkeys(cleaned))             # elimina duplicados
 
-    return (
-        dbc.Alert(f"✅ Grupo de {text} individuos registrado",  color="success"),
-        cleaned, 
-        "/groups_recommender"  
-            )       
+    # Chequea si el grupo tiene la cantidad correcta de individuos
+    if len(cleaned) != cantidad_individuos:
+        return (
+            dbc.Alert("⚠️ Completa tu grupo para obtener recomendación.", color="warning"),
+            dash.no_update,
+            dash.no_update,
+        )
 
-############### recommender.py: Callback to save config recomendaciones (-> groups_results.py) ############### 
+    # Chequea si los IDs son válidos
+    invalid_ids = [uid for uid in cleaned if uid not in db_users["user"].values]
+    if invalid_ids:
+        ids_txt = ", ".join(map(str, invalid_ids))
+        return (
+            dbc.Alert(f"❌ Usuario(s) {ids_txt} no encontrado(s). Introduce IDs válidos o regístralos.", color="danger"),
+            dash.no_update,
+            dash.no_update,
+        )
+    
+    if len(cleaned) == cantidad_individuos and not invalid_ids:
+        ids_txt = ", ".join(map(str, cleaned))
+        return (
+            dbc.Alert(f"✅ Grupo de {ids_txt} individuos registrado.", color="success"),
+            cleaned,                   
+            "/groups_recommender",   
+        )
+
+############### group_recommender.py: Callback to save config recomendaciones (-> groups_results.py) ############### 
 @callback(
     [Output("rec_groups_settings", "data"),
      Output("recs-confirmation-groups", "children"),
@@ -316,7 +342,8 @@ def save_group_ids(n_clicks, selected_ids):
     State({"type": "weight-slider", "index": ALL}, "value"),
     prevent_initial_call=True,
 )
-def persist_rec_settings(n_clicks, n_items, algos, weights):
+
+def persist_group_rec_settings(n_clicks, n_items, algos, weights):
     if not n_clicks:
         raise PreventUpdate
     if n_items is None or n_items <= 0:

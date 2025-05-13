@@ -19,6 +19,7 @@ html, body {
   font-family: 'Poppins', sans-serif;
 }
 
+#top-nav { display: none; }
 /* -----------------------------------------------------------
    2.  Header / hero
 ----------------------------------------------------------- */
@@ -233,3 +234,15 @@ input.form-control::-webkit-input-placeholder { color:#7d7d7d; font-weight:300 }
 
 .login-page-groups ~ #top-nav,
 .login-page-groups +  #top-nav { display:none !important; }
+
+/* Config del dropdown de ocupaciones Hace el control y el menú más anchos */
+#ocupacion .Select-control,
+#ocupacion .Select-menu-outer {
+    min-width: 650px;        /* ajusta a lo que necesites */
+}
+
+/* Evita que las opciones partan palabras en dos líneas */
+/*#ocupacion .Select-option,
+/*#ocupacion .Select-placeholder {
+    white-space: nowrap;
+}
