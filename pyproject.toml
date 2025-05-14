@@ -9,6 +9,11 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.10"
 pandas = "^2.2.3"
+dash = "2.18.2"
+dash-bootstrap-components = "1.7.1"
+requests = "2.32.3"
+importlib-metadata = "8.6.1"
+gunicorn = "22.0.0"
 
 
 
