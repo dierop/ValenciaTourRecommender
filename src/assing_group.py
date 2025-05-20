@@ -26,7 +26,7 @@ def asignar_grupos(usuario):
         grupos.append('con hijos pequenos')
 
     if (usuario['children'] == 1 and
-        30 < usuario['age'] < 55):
+        30 < usuario['age'] < 60):
         grupos.append('media edad con hijos')
 
     if ((usuario['id_occupation'] == 11 or usuario['age'] >= 60) and
