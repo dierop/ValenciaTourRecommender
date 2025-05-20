@@ -11,7 +11,7 @@ def asignar_grupos(usuario):
         grupos.append('fuerzas armadas sin hijos')
 
     if (usuario['sex'] == 'M' and
-        usuario['age'] < 40 and
+        usuario['age'] < 30 and
         usuario['children'] == 0):
         grupos.append('hombre joven sin hijos')
 
