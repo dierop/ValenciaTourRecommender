@@ -31,7 +31,7 @@ def asignar_grupos(usuario):
 
     if ((usuario['id_occupation'] == 11 or usuario['age'] >= 60) and
         (usuario['young_children_age'] > 25 or usuario['children'] == 0)):
-        grupos.append('personas desocupadas')
+        grupos.append('personas con tiempo libre')
 
     if (usuario['id_occupation'] in [3, 4] and
         usuario['children'] > 0):
